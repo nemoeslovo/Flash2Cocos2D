@@ -12,77 +12,57 @@
 #import "FTCFrameInfo.h"
 #import "FTCAnimEvent.h"
 #import "FTCEventInfo.h"
+#import "FTCObjectInfo.h"
 
 @implementation FTCParser
 
 
 -(BOOL) parseXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character
-{    
-    // sheets file
-    BOOL sheetParse = [self parseSheetXML:_xmlfile toCharacter:_character];
+{
     // animations file
     BOOL animParse  = [self parseAnimationXML:_xmlfile toCharacter:_character];
     
     [_character setFirstPose];
-    return (sheetParse && animParse);
+    return (animParse);
 }
 
 
--(BOOL) parseSheetXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character
++(NSArray *)parseSheetXML:(NSString *)_xmlfile
 {
-    NSString *baseFile = [NSString stringWithFormat:@"%@_sheets.xml", _xmlfile];
+    NSString *baseFile   = [NSString stringWithFormat:@"%@_sheets.xml", _xmlfile];
+    NSError  *error      = nil;
+    TBXML    *_xmlMaster = [[TBXML newTBXMLWithXMLFile:baseFile error:&error] autorelease];
     
-    NSError *error = nil;
-    TBXML *_xmlMaster = [[TBXML newTBXMLWithXMLFile:baseFile error:&error] autorelease];
-    
-    // root    
-    TBXMLElement *_root = _xmlMaster.rootXMLElement;
+    TBXMLElement *_root  = _xmlMaster.rootXMLElement;
 
-    if (!_root) return NO;
-    
-    TBXMLElement *_texturesheet = [TBXML childElementNamed:@"TextureSheet" parentElement:_root];
-    
-    // check if there's a spritesheet for it
-    NSString *_textureSheetName = [NSString stringWithFormat:@"%@.plist", [TBXML valueOfAttributeNamed:@"name" forElement:_texturesheet]];
-
-    NSString *pathAndFileName = [[NSBundle mainBundle] pathForResource:_textureSheetName ofType:nil];
-    BOOL      textureSheetExists = [[NSFileManager defaultManager] fileExistsAtPath:pathAndFileName];
-    
-    if (textureSheetExists) {
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:_textureSheetName];
+    if (_root == nil) {
+        CCLOG(error);
     }
     
-    TBXMLIterateBlock block = ^(TBXMLElement *_texture) {
-        NSString *nName     = [TBXML valueOfAttributeNamed:@"name" forElement:_texture];
-        
-        NSRange NghostNameRange;
-        
-        NghostNameRange = [nName rangeOfString:@"ftcghost"];
-        
-        float     nAX       =   [[TBXML valueOfAttributeNamed:@"registrationPointX" forElement:_texture] floatValue];
-        float     nAY       = -([[TBXML valueOfAttributeNamed:@"registrationPointY" forElement:_texture] floatValue]);
-        NSString *nImage    =   [TBXML  valueOfAttributeNamed:@"path"               forElement:_texture];
-        int       zIndex    =   [[TBXML valueOfAttributeNamed:@"zIndex"             forElement:_texture] intValue];
-        
-        // no support for sprite sheets yet
-        FTCSprite *_sprite = nil;
-        if (textureSheetExists) {
-            _sprite = [FTCSprite spriteWithSpriteFrameName:nImage];
-        } else {
-            _sprite = [FTCSprite spriteWithFile:nImage];
-        }
-        
-        // SET ANCHOR P
-        CGSize eSize = [_sprite boundingBox].size;
-        CGPoint aP = CGPointMake(nAX/eSize.width, (eSize.height - (-nAY))/eSize.height);
-        [_sprite setAnchorPoint:aP];
-        [_character addElement:_sprite withName:nName atIndex:zIndex];
-        [_sprite release]; //no need it more. cocos take care about it
-    };
+    TBXMLElement   *_texturesheet = [TBXML childElementNamed:@"TextureSheet" parentElement:_root];
+    NSMutableArray *objectsList   = [NSArray array];
     
+    TBXMLIterateBlock block = ^(TBXMLElement *_texture) {
+        FTCObjectInfo *objectInfo = [[FTCObjectInfo alloc] init];
+
+        [objectInfo setName:[TBXML valueOfAttributeNamed:@"name"
+                                              forElement:_texture]];
+        [objectInfo setPath:[TBXML  valueOfAttributeNamed:@"path"
+                                               forElement:_texture]];
+        [objectInfo setRegistrationPointX:[[TBXML valueOfAttributeNamed:@"registrationPointX"
+                                                             forElement:_texture] floatValue]];
+        //don't know why minus
+        [objectInfo setRegistrationPointY:-([[TBXML valueOfAttributeNamed:@"registrationPointY"
+                                                               forElement:_texture] floatValue])];
+        [objectInfo setZIndex:[[TBXML valueOfAttributeNamed:@"zIndex"
+                                                 forElement:_texture] intValue]];
+        
+        [objectsList addObject:objectInfo];
+        [objectInfo release];
+    };
     [TBXML iterateElementsForQuery:@"Texture" fromElement:_texturesheet withBlock:block];
     
-    return YES;
+    return objectsList;
 }
 
 -(BOOL) parseAnimationXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character
