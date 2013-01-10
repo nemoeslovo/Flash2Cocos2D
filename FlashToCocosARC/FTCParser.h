@@ -8,14 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import "TBXML.h"
-#import "FTCFrameInfo.h"
 
 @class FTCCharacter;
+@class FTCAnimationsSet;
+@class FTCFrameInfo;
 
 @interface FTCParser : NSObject
 
--(BOOL) parseXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character;
+/**
+ send only xml preficses to this methods, not real file names!
+ E.g. string @"robot". It will be converted to @"robot_sheet.xml" and @"robot_animation.xml" automatically.
+**/
 +(NSArray *) parseSheetXML:(NSString *)_xmlfile;
--(BOOL) parseAnimationXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character;
++(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character;
 
 @end
