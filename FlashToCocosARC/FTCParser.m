@@ -36,7 +36,7 @@
     TBXMLElement *_root  = _xmlMaster.rootXMLElement;
 
     if (_root == nil) {
-        CCLOG(error);
+        NSLog(@"%@",[error localizedDescription]);
     }
     
     TBXMLElement   *_texturesheet = [TBXML childElementNamed:@"TextureSheet" parentElement:_root];
