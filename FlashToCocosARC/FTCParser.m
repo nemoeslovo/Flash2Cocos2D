@@ -40,7 +40,7 @@
     }
     
     TBXMLElement   *_texturesheet = [TBXML childElementNamed:@"TextureSheet" parentElement:_root];
-    NSMutableArray *objectsList   = [NSArray array];
+    NSMutableArray *objectsList   = [NSMutableArray array];
     
     TBXMLIterateBlock block = ^(TBXMLElement *_texture) {
         FTCObjectInfo *objectInfo = [[FTCObjectInfo alloc] init];

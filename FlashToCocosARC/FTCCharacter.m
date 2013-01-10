@@ -9,6 +9,7 @@
 #import "FTCCharacter.h"
 #import "FTCParser.h"
 #import "FTCEventInfo.h"
+#import "FTCObjectInfo.h"
 
 @implementation FTCCharacter
 {
@@ -228,6 +229,7 @@
 
 -(void) createCharacterFromXML:(NSString *)_xmlfile
 {
+    [self fillWithObjects:[FTCParser parseSheetXML:_xmlfile]];
     if ([[[FTCParser alloc] init] parseXML:_xmlfile toCharacter:self])
     {
         [self scheduleAnimation];
@@ -235,6 +237,23 @@
     }
     
     NSLog(@"FTCCharacter: There was an error parsing xmlFile: %@", _xmlfile);
+}
+
+-(void) fillWithObjects:(NSArray *)objects
+{
+    for (FTCObjectInfo *info in objects) {
+        
+        FTCSprite *_sprite = [FTCSprite spriteWithFile:[info path]];
+        
+        // SET ANCHOR P
+        CGSize eSize = [_sprite boundingBox].size;
+        CGPoint aP = CGPointMake( [info registrationPointX] / eSize.width
+                                , (eSize.height - (-[info registrationPointY])) / eSize.height);
+        
+        [_sprite setAnchorPoint:aP];
+        
+        [self addElement:_sprite withName:[info name] atIndex:[info zIndex]];
+    }
 }
 
 -(void) scheduleAnimation
