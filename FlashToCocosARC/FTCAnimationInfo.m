@@ -10,6 +10,15 @@
 
 @implementation FTCAnimationInfo
 
-@synthesize name, frameInfoArray, partName;
+@synthesize name;
+@synthesize parts;
+
+-(void)dealloc
+{
+    [name dealloc];
+    [parts dealloc];
+    
+    [super dealloc];
+}
 
 @end
