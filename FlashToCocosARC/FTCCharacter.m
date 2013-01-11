@@ -10,6 +10,14 @@
 #import "FTCParser.h"
 #import "FTCEventInfo.h"
 #import "FTCObjectInfo.h"
+#import "FTCAnimationsSet.h"
+#import "FTCAnimationInfo.h"
+#import "FTCPartInfo.h"
+#import "FTCFrameInfo.h"
+
+@interface FTCCharacter()
+    @property(retain) FTCAnimationsSet *animationSet;
+@end
 
 @implementation FTCCharacter
 {
@@ -20,6 +28,7 @@
 @synthesize animationEventsTable;
 @synthesize delegate;
 @synthesize frameRate;
+@synthesize animationSet;
 
 
 +(FTCCharacter *) characterFromXMLFile:(NSString *)_xmlfile
@@ -184,7 +193,13 @@
     }
     
     currentAnimEvent = [[self.animationEventsTable objectForKey:_animId] eventsInfo];
-    currentAnimationLength = [[self.animationEventsTable objectForKey:_animId] frameCount];
+    
+    //TODO make dictionary
+    for(FTCAnimationInfo *animation in [[self animationSet] animations]) {
+        if ([[animation name] isEqualToString:_animId]) {
+            currentAnimationLength = [animation frameCount];
+        }
+    }
     
     //    NSLog(@"PLAY ANIMATION - %@ CurrentAnimLength %i", _animId, currentAnimationLength);
     
@@ -233,13 +248,20 @@
     [self fillSpritesWithAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
     [self setFirstPose];
     [self scheduleAnimation];
-  
-//    NSLog(@"FTCCharacter: There was an error parsing xmlFile: %@", _xmlfile);
+    
+    //    NSLog(@"FTCCharacter: There was an error parsing xmlFile: %@", _xmlfile);
 }
 
--(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)animation
+-(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)animationSet
 {
-    
+    [self setFrameRate:[animationSet framerate]];
+    for (FTCAnimationInfo *animation in [animationSet animations]) {
+        for(FTCPartInfo *part in [animation parts]) {
+            FTCSprite *sprite = [self getChildByName:[part name]];
+            [[sprite animationsArr] setValue:[part framesInfo] forKey:[animation name]];
+        }
+    }
+    [self setAnimationSet:animationSet];
 }
 
 -(void) fillWithObjects:(NSArray *)objects
@@ -254,6 +276,7 @@
                                 , (eSize.height - (-[info registrationPointY])) / eSize.height);
         
         [_sprite setAnchorPoint:aP];
+        [_sprite setName:[info name]];
         
         [self addElement:_sprite withName:[info name] atIndex:[info zIndex]];
     }

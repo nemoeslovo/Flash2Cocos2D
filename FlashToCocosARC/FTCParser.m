@@ -77,7 +77,9 @@
 }
 
 +(FTCAnimationInfo *) getAnimationInfoFromElement:(TBXMLElement *)_animation {
-    NSString *animName = [TBXML valueOfAttributeNamed:@"name" forElement:_animation];
+    NSString *animName  = [TBXML valueOfAttributeNamed:@"name" forElement:_animation];
+    int      frameCount = [[TBXML valueOfAttributeNamed:@"frameCount" forElement:_animation] integerValue];
+    
     if ([animName isEqualToString:@""]) {
         animName = @"_init";
     }
@@ -94,6 +96,7 @@
     FTCAnimationInfo *animationInfo = [[FTCAnimationInfo alloc] init];
     [animationInfo setName:animName];
     [animationInfo setParts:parts];
+    [animationInfo setFrameCount:frameCount];
     
     return animationInfo;
 }

@@ -12,6 +12,7 @@
 
 @synthesize name;
 @synthesize parts;
+@synthesize frameCount;
 
 -(void)dealloc
 {
