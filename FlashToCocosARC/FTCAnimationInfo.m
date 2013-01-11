@@ -14,12 +14,4 @@
 @synthesize parts;
 @synthesize frameCount;
 
--(void)dealloc
-{
-    [name dealloc];
-    [parts dealloc];
-    
-    [super dealloc];
-}
-
 @end

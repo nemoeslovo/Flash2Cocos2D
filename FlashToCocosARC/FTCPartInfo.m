@@ -13,12 +13,5 @@
 @synthesize name;
 @synthesize framesInfo;
 
--(void)dealloc
-{
-    [name dealloc];
-    [framesInfo dealloc];
-    
-    [super dealloc];
-}
 
 @end

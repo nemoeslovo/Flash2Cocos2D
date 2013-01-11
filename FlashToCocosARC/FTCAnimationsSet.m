@@ -13,10 +13,4 @@
 @synthesize framerate;
 @synthesize animations;
 
--(void)dealloc
-{
-    [animations dealloc];
-    [super dealloc];
-}
-
 @end

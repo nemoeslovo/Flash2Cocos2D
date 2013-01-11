@@ -48,7 +48,6 @@
                                                  forElement:_texture] intValue]];
         
         [objectsList addObject:objectInfo];
-        [objectInfo release];
     };
     [TBXML iterateElementsForQuery:@"Texture" fromElement:_texturesheet withBlock:block];
     
@@ -103,7 +102,7 @@
 
 +(FTCPartInfo *) getPartInfoFromElement:(TBXMLElement *)_part
 {
-    NSString       *partName     = [[TBXML valueOfAttributeNamed:@"name" forElement:_part] autorelease];
+    NSString       *partName     = [TBXML valueOfAttributeNamed:@"name" forElement:_part];
     NSMutableArray *__partFrames = [NSMutableArray array];
     
     TBXMLIterateBlock frameBlock = ^(TBXMLElement *_frameInfo)
@@ -179,7 +178,7 @@
 +(TBXMLElement*) getRootElementFromXML:(NSString *)_xmlFile
 {
     NSError  *error      = nil;
-    TBXML    *_xmlMaster = [[TBXML newTBXMLWithXMLFile:_xmlFile error:&error] autorelease];
+    TBXML    *_xmlMaster = [TBXML newTBXMLWithXMLFile:_xmlFile error:&error] ;
     
     TBXMLElement *_root  = _xmlMaster.rootXMLElement;
     

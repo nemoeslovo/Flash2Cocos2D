@@ -13,10 +13,5 @@
 @synthesize eventType;
 @synthesize frameIndex;
 
--(void)dealloc
-{
-    [eventType dealloc];
-    [super dealloc];
-}
 
 @end

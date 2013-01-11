@@ -16,13 +16,6 @@
 @synthesize registrationPointY;
 @synthesize zIndex;
 
--(void)dealloc {
-    [name dealloc];
-    [path dealloc];
-    
-    [super dealloc];
-}
-
 -(id)initWithName:(NSString *)_name andPath:(NSString *)_path andRPX:(float)_rpx andRPY:(float)_rpy andZIndex:(int)_zIndex {
     self = [super init];
     if (self != nil) {
