@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TBXML.h"
 
-@class FTCCharacter;
+@class FTCAnimatedNode;
 @class FTCAnimationsSet;
 @class FTCFrameInfo;
 

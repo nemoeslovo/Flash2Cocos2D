@@ -7,7 +7,7 @@
 //
 
 #import "FTCParser.h"
-#import "FTCCharacter.h"
+#import "FTCAnimatedNode.h"
 #import "FTCSprite.h"
 #import "FTCFrameInfo.h"
 #import "FTCAnimEvent.h"
