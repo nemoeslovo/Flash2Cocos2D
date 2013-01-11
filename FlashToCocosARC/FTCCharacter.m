@@ -230,13 +230,16 @@
 -(void) createCharacterFromXML:(NSString *)_xmlfile
 {
     [self fillWithObjects:[FTCParser parseSheetXML:_xmlfile]];
-    if ([[[FTCParser alloc] init] parseXML:_xmlfile toCharacter:self])
-    {
-        [self scheduleAnimation];
-        return;
-    }
+    [self fillSpritesWithAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
+    [self setFirstPose];
+    [self scheduleAnimation];
+  
+//    NSLog(@"FTCCharacter: There was an error parsing xmlFile: %@", _xmlfile);
+}
+
+-(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)animation
+{
     
-    NSLog(@"FTCCharacter: There was an error parsing xmlFile: %@", _xmlfile);
 }
 
 -(void) fillWithObjects:(NSArray *)objects

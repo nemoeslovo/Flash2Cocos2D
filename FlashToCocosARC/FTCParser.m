@@ -55,7 +55,7 @@
     return objectsList;
 }
 
-+(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character
++(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile
 {
     TBXMLElement *_root    = [self getRootElementFromXML: [NSString stringWithFormat:@"%@_animations.xml", _xmlfile]];
     float        frameRate = [[TBXML valueOfAttributeNamed:@"frameRate" forElement:_root] floatValue];

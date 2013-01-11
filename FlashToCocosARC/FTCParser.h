@@ -20,6 +20,6 @@
  E.g. string @"robot". It will be converted to @"robot_sheet.xml" and @"robot_animation.xml" automatically.
 **/
 +(NSArray *) parseSheetXML:(NSString *)_xmlfile;
-+(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile toCharacter:(FTCCharacter *)_character;
++(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile;
 
 @end

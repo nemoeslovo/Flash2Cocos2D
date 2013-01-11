@@ -10,7 +10,9 @@
 #import "cocos2d.h"
 #import "FTCFrameInfo.h"
 
-@class  FTCCharacter;
+@class FTCCharacter;
+@class FTCFrameInfo;
+@class FTCPartInfo;
 
 @interface FTCSprite : CCSprite 
 {
@@ -26,6 +28,8 @@
 @property (unsafe_unretained) BOOL       ignoreAlpha;
 
 @property (nonatomic, strong) NSMutableDictionary   *animationsArr;
+
+-(id)initWithFile:(NSString *)filename andPartAnimation:(FTCPartInfo *)partInfo;
 
 // private
 -(void) setCurrentAnimation:(NSString *)_framesId forCharacter:(FTCCharacter *)_character;
