@@ -248,20 +248,18 @@
     [self fillSpritesWithAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
     [self setFirstPose];
     [self scheduleAnimation];
-    
-    //    NSLog(@"FTCCharacter: There was an error parsing xmlFile: %@", _xmlfile);
 }
 
--(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)animationSet
+-(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)_animationSet
 {
-    [self setFrameRate:[animationSet framerate]];
-    for (FTCAnimationInfo *animation in [animationSet animations]) {
+    [self setFrameRate:[_animationSet framerate]];
+    for (FTCAnimationInfo *animation in [_animationSet animations]) {
         for(FTCPartInfo *part in [animation parts]) {
             FTCSprite *sprite = [self getChildByName:[part name]];
             [[sprite animationsArr] setValue:[part framesInfo] forKey:[animation name]];
         }
     }
-    [self setAnimationSet:animationSet];
+    [self setAnimationSet:_animationSet];
 }
 
 -(void) fillWithObjects:(NSArray *)objects
