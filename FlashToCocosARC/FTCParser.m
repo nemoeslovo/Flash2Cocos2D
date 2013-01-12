@@ -84,11 +84,12 @@
     }
     
     NSMutableArray *parts = [NSMutableArray array];
-    TBXMLIterateBlock partBlock = ^(TBXMLElement *_part)
-    {
+    
+    TBXMLElement *_part = [TBXML childElementNamed:@"Part" parentElement:_animation];
+    while (_part) {
         [parts addObject:[self getPartInfoFromElement:_part]];
-    };
-    [TBXML iterateElementsForQuery:@"Part" fromElement:_animation withBlock:partBlock];
+        _part = _part->nextSibling;
+    }
     
     [self processEventsFromElement:_animation];
     
@@ -105,11 +106,11 @@
     NSString       *partName     = [TBXML valueOfAttributeNamed:@"name" forElement:_part];
     NSMutableArray *__partFrames = [NSMutableArray array];
     
-    TBXMLIterateBlock frameBlock = ^(TBXMLElement *_frameInfo)
-    {
+    TBXMLElement *_frameInfo = [TBXML childElementNamed:@"Frame" parentElement:_part];
+    while (_frameInfo) {
         [__partFrames addObject:[self getFrameInfoFromElement:_frameInfo]];
-    };
-    [TBXML iterateElementsForQuery:@"Frame" fromElement:_part withBlock:frameBlock];
+        _frameInfo = _frameInfo ->nextSibling;
+    }
      
     FTCPartInfo *partInfo = [[FTCPartInfo alloc] init];
     [partInfo setName:partName];
