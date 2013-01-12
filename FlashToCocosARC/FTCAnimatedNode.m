@@ -73,8 +73,6 @@ typedef struct _ftcIgnoreAnimationFlags {
 @synthesize frameInfoArray = _frameInfoArray;
 
 
-
-
 -(id) initFromXMLFile:(NSString *)_xmlfile
 {
     self = [self init];
@@ -104,6 +102,7 @@ typedef struct _ftcIgnoreAnimationFlags {
         [node addAnimation:partAnimation withName:animationName];
         [self addElement:node withName:[node name] atIndex:[node zOrder]];
     }
+    return self;
 }
 
 - (id)init
@@ -112,6 +111,7 @@ typedef struct _ftcIgnoreAnimationFlags {
     if (self) {
         [self setChildrenTable:       [NSMutableDictionary dictionary]];
         [self setAnimationEventsTable:[NSMutableDictionary dictionary]];
+        [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
         self->currentAnimationId    = [NSString string];
     }
     
@@ -151,7 +151,7 @@ typedef struct _ftcIgnoreAnimationFlags {
         [node setCurrentAnimation:currentAnimationId];
     }
     
-    currentAnimEvent = [[self.animationEventsTable objectForKey:_animId] eventsInfo];
+//    currentAnimEvent = [[self.animationEventsTable objectForKey:_animId] eventsInfo];
     
     //TODO make dictionary
     for(FTCAnimationInfo *animation in [[self animationSet] animations]) {
@@ -259,6 +259,11 @@ typedef struct _ftcIgnoreAnimationFlags {
     [self setAnimationSet:_animationSet];
 }
 
+-(void)addAnimation:(FTCPartInfo *)partAnimation withName:(NSString *)animationName
+{
+    [[self frameInfoArray] setObject:[partAnimation framesInfo] forKey:animationName];
+}
+
 -(void) setFirstPose
 {
     //TODO add delegate
@@ -283,24 +288,24 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 -(void) applyFrameInfo:(FTCFrameInfo *)_frameInfo
 {
-    if (!ignorePosition) {
+//    if (!ignorePosition) {
         [self setPosition:CGPointMake(_frameInfo.x, _frameInfo.y)];
-    }
+//    }
     
-    if (!_ignoreRotation) {
+//    if (!_ignoreRotation) {
         [self setRotation:_frameInfo.rotation];
-    }
+//    }
     
-    if (!_ignoreScale) {
+//    if (!_ignoreScale) {
         if (_frameInfo.scaleX!=0)   [self setScaleX:_frameInfo.scaleX];
         if (_frameInfo.scaleY!=0)   [self setScaleY:_frameInfo.scaleY];
-    }
+//    }
     
-    if (!_ignoreAlpha) {
+//    if (!_ignoreAlpha) {
         //TODO addOpacity to all children through loop
         
         //[self setOpacity:_frameInfo.alpha * 255];
-    }
+//    }
 }
 
 
