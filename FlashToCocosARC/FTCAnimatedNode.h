@@ -22,6 +22,7 @@
     NSString                    *currentAnimationId;
     
     BOOL                        _isPaused;
+    BOOL                        _doesLoop;
 }
 
 @property (unsafe_unretained) id<FTCCharacterDelegate> delegate;
@@ -48,10 +49,11 @@
 
 
 -(id) initFromXMLFile:(NSString *)_xmlfile;
--(id) initWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *) partAnimation;
--(id) initWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation;
+-(id) initWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *) partAnimation andAnimationName:(NSString *)animationName;
+-(id) initWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation andAnimationName:(NSString *)animationName;
 
--(void) addAnimation:(FTCPartInfo *)partAnimation;
+-(void) addAnimation:(FTCPartInfo *)partAnimation withName:(NSString *)animationName;
+-(void) playAnimation:(NSString *)_animId;
 -(void) playAnimation:(NSString *)_animId loop:(BOOL)_isLoopable wait:(BOOL)_wait;
 -(void) stopAnimation;
 -(void) pauseAnimation;

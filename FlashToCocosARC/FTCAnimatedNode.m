@@ -20,12 +20,12 @@
     NSArray         *currentAnimationInfo;
 }
 
-typedef struct _ftcAnimationFlags {
+typedef struct _ftcIgnoreAnimationFlags {
     BOOL       ignoreRotation;
     BOOL       ignorePosition;
     BOOL       ignoreScale;
     BOOL       ignoreAlpha;
-} animationFlags;
+} ignoreAnimationFlags;
 
 @property(retain) FTCAnimationsSet *animationSet;
 
@@ -43,24 +43,18 @@ typedef struct _ftcAnimationFlags {
 -(void) playFrame:(int)_frameIndex fromAnimation:(NSString *)_animationId;
 -(void) playFrame;
 
-//TODO move to init
--(void) createCharacterFromXML:(NSString *)_xmlfile;
-
 -(void) scheduleAnimation;
 -(NSString *) getCurrentAnimation;
 -(int) getDurationForAnimation:(NSString *)_animationId;
 -(FTCAnimatedNode *) getChildByName:(NSString *)_childName;
--(int) getCurrentFrame;
 -(void) addElement:(FTCAnimatedNode *)_element withName:(NSString *)_name atIndex:(int)_index;
 -(void) reorderChildren;
-
 
 -(void) setCurrentAnimation:(NSString *)_framesId;
 -(void) setCurrentAnimationFramesInfo:(NSArray *)_framesInfoArr;
 -(void) applyFrameWithId:(int)_frameindex;
 -(void) applyFrameInfo:(FTCFrameInfo *)_frameInfo;
 
-/////////////////////
 @end
 
 @implementation FTCAnimatedNode
@@ -81,23 +75,35 @@ typedef struct _ftcAnimationFlags {
 
 
 
--(id) initFromXMLFile:(NSString *)_xmlfile {
-    
+-(id) initFromXMLFile:(NSString *)_xmlfile
+{
     self = [self init];
-    if (self)
-    {
-        [self createCharacterFromXML:_xmlfile];
+    if (self) {
+        [self fillWithObjects:[FTCParser parseSheetXML:_xmlfile]];
+        [self fillSpritesWithAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
+        [self setFirstPose];
+        [self scheduleAnimation];
     }
     
     return self;
 }
 
--(id) initWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *) partAnimation {
+-(id) initWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *)partAnimation andAnimationName:(NSString *)animationName
+{
+    FTCAnimatedNode *node = [[FTCAnimatedNode alloc] init];
+    [node addChild:sprite];
+    self = [self initWithAnimationNode:node andPartAnimation:partAnimation andAnimationName:animationName];
     
+    return self;
 }
 
--(id) initWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation {
-    
+-(id) initWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation andAnimationName:(NSString *)animationName
+{
+    self = [self init];
+    if (self) {
+        [node addAnimation:partAnimation withName:animationName];
+        [self addElement:node withName:[node name] atIndex:[node zOrder]];
+    }
 }
 
 - (id)init
@@ -112,6 +118,56 @@ typedef struct _ftcAnimationFlags {
     return self;
 }
 
+-(void) pauseAnimation
+{
+    _isPaused = YES;
+}
+
+-(void) resumeAnimation
+{
+    _isPaused = NO;
+}
+
+-(void) stopAnimation
+{
+    currentAnimationLength = 0;
+    currentAnimationId     = [NSString string];
+}
+
+-(void) playAnimation:(NSString *)_animId loop:(BOOL)_isLoopable wait:(BOOL)_wait
+{
+    if (_wait && currentAnimationLength>0) {
+        return;
+    }
+    
+    _isPaused          = NO;
+    
+    intFrame           = 0;
+    _doesLoop          = _isLoopable;
+    currentAnimationId = _animId;
+    
+    
+    for (FTCAnimatedNode *node in self.childrenTable.allValues) {
+        [node setCurrentAnimation:currentAnimationId];
+    }
+    
+    currentAnimEvent = [[self.animationEventsTable objectForKey:_animId] eventsInfo];
+    
+    //TODO make dictionary
+    for(FTCAnimationInfo *animation in [[self animationSet] animations]) {
+        if ([[animation name] isEqualToString:_animId]) {
+            currentAnimationLength = [animation frameCount];
+        }
+    }
+
+}
+
+-(void) scheduleAnimation
+{
+    [scheduler_ unscheduleAllSelectorsForTarget:self];
+    [scheduler_ scheduleSelector:@selector(handleScheduleUpdate:) forTarget:self interval:frameRate/1000 paused:NO];
+}
+
 -(void) handleScheduleUpdate:(ccTime)_dt
 {
     if (currentAnimationLength == 0 || _isPaused ) {
@@ -122,11 +178,8 @@ typedef struct _ftcAnimationFlags {
     
     // end of animation
     if (intFrame == currentAnimationLength) {
-    
-        if (![nextAnimationId isEqualToString:@""]) {
-            [self playAnimation:nextAnimationId loop:nextAnimationDoesLoop wait:NO];
-            return;
-        }
+        
+        //TODO add support of animation que
         
         if (!_doesLoop) {
             [self stopAnimation];
@@ -143,80 +196,22 @@ typedef struct _ftcAnimationFlags {
 {
     for (FTCAnimatedNode *animationNode in self.childrenTable.allValues) {
         [animationNode applyFrame:intFrame];
-    }    
-}
-
--(void) pauseAnimation
-{
-    _isPaused = YES;
-}
-
--(void) resumeAnimation
-{
-    _isPaused = NO;
-}
-
-
--(void) stopAnimation
-{
-    currentAnimationLength = 0;
-    currentAnimationId     = [NSString string];
-}
-
--(void) playAnimation:(NSString *)_animId loop:(BOOL)_isLoopable wait:(BOOL)_wait
-{
-    if (_wait && currentAnimationLength>0) {
-        nextAnimationId = _animId;
-        nextAnimationDoesLoop = _isLoopable;
-        return;
     }
-    
-    _isPaused             = NO;
-    nextAnimationId       = [NSString string];
-    nextAnimationDoesLoop = NO;
-    
-    intFrame = 0;
-    _doesLoop = _isLoopable;
-    currentAnimationId = _animId;
-    
-    
-    for (FTCSprite *sprite in self.childrenTable.allValues) {
-        [sprite setCurrentAnimation:currentAnimationId forCharacter:self];
-    }
-    
-    currentAnimEvent = [[self.animationEventsTable objectForKey:_animId] eventsInfo];
-    
-    //TODO make dictionary
-    for(FTCAnimationInfo *animation in [[self animationSet] animations]) {
-        if ([[animation name] isEqualToString:_animId]) {
-            currentAnimationLength = [animation frameCount];
-        }
-    }
-    
-    //    NSLog(@"PLAY ANIMATION - %@ CurrentAnimLength %i", _animId, currentAnimationLength);
-    
-    if ([delegate respondsToSelector:@selector(onCharacter:startsAnimation:)])
-        [delegate onCharacter:self startsAnimation:_animId];
-    
 }
 
--(FTCSprite *) getChildByName:(NSString *)_childname
+-(FTCAnimatedNode *) getChildByName:(NSString *)_childname
 {
     // build a predicate to look in the table what object has the propery _childname in .name
     return [self.childrenTable objectForKey:_childname];
 }
 
--(NSString *) getCurrentAnimation
-{
-    return currentAnimationId;
-}
-
 -(int) getDurationForAnimation:(NSString *)_animationId
 {
+    //TODO get duration from dictionary of animations, not from animation events dictionary
     return [[self.animationEventsTable objectForKey:_animationId] frameCount];
 }
 
--(void) addElement:(FTCSprite *)_element withName:(NSString *)_name atIndex:(int)_index
+-(void) addElement:(FTCAnimatedNode *)_element withName:(NSString *)_name atIndex:(int)_index
 {
     [self addChild:_element z:_index];
 
@@ -232,31 +227,11 @@ typedef struct _ftcAnimationFlags {
     }];
 }
 
--(void) createCharacterFromXML:(NSString *)_xmlfile
-{
-    [self fillWithObjects:[FTCParser parseSheetXML:_xmlfile]];
-    [self fillSpritesWithAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
-    [self setFirstPose];
-    [self scheduleAnimation];
-}
-
--(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)_animationSet
-{
-    [self setFrameRate:[_animationSet framerate]];
-    for (FTCAnimationInfo *animation in [_animationSet animations]) {
-        for(FTCPartInfo *part in [animation parts]) {
-            FTCSprite *sprite = [self getChildByName:[part name]];
-            [[sprite animationsArr] setValue:[part framesInfo] forKey:[animation name]];
-        }
-    }
-    [self setAnimationSet:_animationSet];
-}
-
 -(void) fillWithObjects:(NSArray *)objects
 {
     for (FTCObjectInfo *info in objects) {
         
-        FTCSprite *_sprite = [FTCSprite spriteWithFile:[info path]];
+        CCSprite *_sprite = [CCSprite spriteWithFile:[info path]];
         
         // SET ANCHOR P
         CGSize eSize = [_sprite boundingBox].size;
@@ -264,56 +239,38 @@ typedef struct _ftcAnimationFlags {
                                 , (eSize.height - (-[info registrationPointY])) / eSize.height);
         
         [_sprite setAnchorPoint:aP];
-        [_sprite setName:[info name]];
+        FTCAnimatedNode *newNode = [[FTCAnimatedNode alloc] init];
+        [newNode addChild:_sprite];
+        [newNode setName:[info name]];
         
-        [self addElement:_sprite withName:[info name] atIndex:[info zIndex]];
+        [self addElement:newNode withName:[info name] atIndex:[info zIndex]];
     }
 }
 
--(void) scheduleAnimation
+-(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)_animationSet
 {
-    [scheduler_ unscheduleAllSelectorsForTarget:self];
-    [scheduler_ scheduleSelector:@selector(handleScheduleUpdate:) forTarget:self interval:frameRate/1000 paused:NO];
+    [self setFrameRate:[_animationSet framerate]];
+    for (FTCAnimationInfo *animation in [_animationSet animations]) {
+        for(FTCPartInfo *part in [animation parts]) {
+            FTCAnimatedNode *node = [self getChildByName:[part name]];
+            [node addAnimation:part withName:[animation name]];
+        }
+    }
+    [self setAnimationSet:_animationSet];
 }
 
 -(void) setFirstPose
 {
-    if ([self.delegate respondsToSelector:@selector(onCharacterCreated:)])
-        [self.delegate onCharacterCreated:self];
+    //TODO add delegate
     
     if (onComplete)
         onComplete();
 }
 
--(void) setCurrentAnimation:(NSString *)_framesId forCharacter:(FTCAnimatedNode *)_character
+-(void) setCurrentAnimation:(NSString *)_framesId
 {
-    currentCharacter = _character;
-    currentAnimationInfo = [self.frameInfoArray objectForKey:_framesId];
+    currentAnimationInfo = [[self frameInfoArray] objectForKey:_framesId];
 }
-
--(void) setCurrentAnimationFramesInfo:(NSArray *)_framesInfoArr forCharacter:(FTCAnimatedNode *)_character
-{
-    currentCharacter = _character;
-    currentAnimationInfo = _framesInfoArr;
-}
-
--(void) applyFrameInfo:(FTCFrameInfo *)_frameInfo
-{
-    if (!_ignorePosition)
-        [self setPosition:CGPointMake(_frameInfo.x, _frameInfo.y)];
-    
-    if (!_ignoreRotation)
-        [self setRotation:_frameInfo.rotation];
-    
-    if (!_ignoreScale) {
-        if (_frameInfo.scaleX!=0)   [self setScaleX:_frameInfo.scaleX];
-        if (_frameInfo.scaleY!=0)   [self setScaleY:_frameInfo.scaleY];
-    }
-    
-    if (!_ignoreAlpha)
-        [self setOpacity:_frameInfo.alpha * 255];
-}
-
 
 -(void) applyFrame:(int)_frameindex
 {
@@ -321,6 +278,28 @@ typedef struct _ftcAnimationFlags {
         if (_frameindex < currentAnimationInfo.count) {
             [self applyFrameInfo:[currentAnimationInfo objectAtIndex:_frameindex]];
         }
+    }
+}
+
+-(void) applyFrameInfo:(FTCFrameInfo *)_frameInfo
+{
+    if (!ignorePosition) {
+        [self setPosition:CGPointMake(_frameInfo.x, _frameInfo.y)];
+    }
+    
+    if (!_ignoreRotation) {
+        [self setRotation:_frameInfo.rotation];
+    }
+    
+    if (!_ignoreScale) {
+        if (_frameInfo.scaleX!=0)   [self setScaleX:_frameInfo.scaleX];
+        if (_frameInfo.scaleY!=0)   [self setScaleY:_frameInfo.scaleY];
+    }
+    
+    if (!_ignoreAlpha) {
+        //TODO addOpacity to all children through loop
+        
+        //[self setOpacity:_frameInfo.alpha * 255];
     }
 }
 
