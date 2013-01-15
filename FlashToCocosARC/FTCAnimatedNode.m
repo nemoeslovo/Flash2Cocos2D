@@ -288,20 +288,23 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 -(void) applyFrameInfo:(FTCFrameInfo *)_frameInfo
 {
-//    if (!ignorePosition) {
-        [self setPosition:CGPointMake(_frameInfo.x, _frameInfo.y)];
-//    }
+    CGPoint point = CGPointMake([_frameInfo x], [_frameInfo y]);
+    [self setPosition:CGPointMake([_frameInfo x], [_frameInfo y])];
     
-//    if (!_ignoreRotation) {
-        [self setRotation:_frameInfo.rotation];
-//    }
+    [self setRotation:[_frameInfo rotation]];
     
-//    if (!_ignoreScale) {
-        if (_frameInfo.scaleX!=0)   [self setScaleX:_frameInfo.scaleX];
-        if (_frameInfo.scaleY!=0)   [self setScaleY:_frameInfo.scaleY];
-//    }
+    if (_frameInfo.scaleX!=0) {
+        [self setScaleX:_frameInfo.scaleX];
+    }
     
-//    if (!_ignoreAlpha) {
+    if (_frameInfo.scaleY!=0) {
+        [self setScaleY:_frameInfo.scaleY];
+    }
+    
+//    [self setSkewX: - [_frameInfo skewX] * 180/3.14];
+//    [self setSkewY:[_frameInfo skewY] * 180/3.14];
+
+    //    if (!_ignoreAlpha) {
         //TODO addOpacity to all children through loop
         
         //[self setOpacity:_frameInfo.alpha * 255];

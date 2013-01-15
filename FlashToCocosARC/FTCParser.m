@@ -172,7 +172,12 @@
     
     fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&noAlpha] floatValue];
     
-    if (noAlpha) fi.alpha = 1.0;
+    if (noAlpha) {
+        fi.alpha = 1.0;
+    }
+    
+    fi.skewX = [[TBXML valueOfAttributeNamed:@"skewX" forElement:_frameInfo] floatValue];
+    fi.skewY = [[TBXML valueOfAttributeNamed:@"skewY" forElement:_frameInfo] floatValue];
     
     return fi;
 }
