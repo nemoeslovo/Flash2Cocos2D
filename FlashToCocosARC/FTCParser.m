@@ -61,11 +61,12 @@
     
     // set the character animation (it will be filled with events)
     NSMutableArray *animations = [NSMutableArray array];
-    TBXMLIterateBlock block = ^(TBXMLElement *_animation)
-    {
+    
+    TBXMLElement *_animation = [TBXML childElementNamed:@"Animation" parentElement:_root];
+    while (_animation) {
         [animations addObject:[self getAnimationInfoFromElement:_animation]];
-    };
-    [TBXML iterateElementsForQuery:@"Animation" fromElement:_root withBlock:block];
+        _animation = _animation->nextSibling;
+    }
     
     FTCAnimationsSet *animationsSet = [[FTCAnimationsSet alloc] init];
     
