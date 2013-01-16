@@ -14,6 +14,8 @@
 #import "FTCAnimationInfo.h"
 #import "FTCPartInfo.h"
 #import "FTCFrameInfo.h"
+#import "cocos2d.h"
+
 
 @interface FTCAnimatedNode()
 {
@@ -291,19 +293,25 @@ typedef struct _ftcIgnoreAnimationFlags {
     CGPoint point = CGPointMake([_frameInfo x], [_frameInfo y]);
     [self setPosition:CGPointMake([_frameInfo x], [_frameInfo y])];
     
-    [self setRotation:[_frameInfo rotation]];
+    //[self setRotation:[_frameInfo rotation]];
     
     if (_frameInfo.scaleX!=0) {
-        [self setScaleX:_frameInfo.scaleX];
+        [self setScaleX:  _frameInfo.scaleX];
     }
     
     if (_frameInfo.scaleY!=0) {
-        [self setScaleY:_frameInfo.scaleY];
+        [self setScaleY: _frameInfo.scaleY];
     }
-    
-//    [self setSkewX: - [_frameInfo skewX] * 180/3.14];
-//    [self setSkewY:[_frameInfo skewY] * 180/3.14];
 
+    [self setSkewX: -[_frameInfo skewX]];
+    [self setSkewY: -[_frameInfo skewY]];
+
+    [self setOpacity:_frameInfo.alpha * 255];
+    
+
+    
+
+    
     //    if (!_ignoreAlpha) {
         //TODO addOpacity to all children through loop
         

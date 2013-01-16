@@ -7,8 +7,6 @@
 //
 
 #import "FTCParser.h"
-#import "FTCAnimatedNode.h"
-#import "FTCAnimatedNode.h"
 #import "FTCFrameInfo.h"
 #import "FTCAnimEvent.h"
 #import "FTCEventInfo.h"
@@ -175,6 +173,8 @@
     if (noAlpha) {
         fi.alpha = 1.0;
     }
+    
+ 
     
     fi.skewX = [[TBXML valueOfAttributeNamed:@"skewX" forElement:_frameInfo] floatValue];
     fi.skewY = [[TBXML valueOfAttributeNamed:@"skewY" forElement:_frameInfo] floatValue];
