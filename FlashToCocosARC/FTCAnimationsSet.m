@@ -10,7 +10,7 @@
 
 @implementation FTCAnimationsSet
 
-@synthesize framerate;
+@synthesize frameRate = _frameRate;
 @synthesize animations;
 
 @end

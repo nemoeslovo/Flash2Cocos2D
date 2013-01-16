@@ -17,8 +17,7 @@
 #import "cocos2d.h"
 
 
-@interface FTCAnimatedNode()
-{
+@interface FTCAnimatedNode() {
     NSArray         *currentAnimationInfo;
 }
 
@@ -40,27 +39,27 @@ typedef struct _ftcIgnoreAnimationFlags {
 //table of name -> animation that this AnimatedNode able response
 @property (nonatomic, strong) NSMutableDictionary   *frameInfoArray;
 
--(void) setFirstPose;
+- (void)setFirstPose;
+- (void)playFrame:(NSInteger)_frameIndex fromAnimation:(NSString *)_animationId;
+- (void)playFrame;
+- (void)scheduleAnimation;
+- (NSString *)getCurrentAnimation;
+- (NSInteger)getDurationForAnimation:(NSString *)_animationId;
+- (FTCAnimatedNode *)getChildByName:(NSString *)_childName;
 
--(void) playFrame:(int)_frameIndex fromAnimation:(NSString *)_animationId;
--(void) playFrame;
+- (void)addElement:(FTCAnimatedNode *)_element 
+          withName:(NSString *)_name 
+           atIndex:(NSInteger)_index;
 
--(void) scheduleAnimation;
--(NSString *) getCurrentAnimation;
--(int) getDurationForAnimation:(NSString *)_animationId;
--(FTCAnimatedNode *) getChildByName:(NSString *)_childName;
--(void) addElement:(FTCAnimatedNode *)_element withName:(NSString *)_name atIndex:(int)_index;
--(void) reorderChildren;
-
--(void) setCurrentAnimation:(NSString *)_framesId;
--(void) setCurrentAnimationFramesInfo:(NSArray *)_framesInfoArr;
--(void) applyFrameWithId:(int)_frameindex;
--(void) applyFrameInfo:(FTCFrameInfo *)_frameInfo;
+- (void)reorderChildren;
+- (void)setCurrentAnimation:(NSString *)_framesId;
+- (void)setCurrentAnimationFramesInfo:(NSArray *)_framesInfoArr;
+- (void)applyFrameWithId:(NSInteger)_frameindex;
+- (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo;
 
 @end
 
-@implementation FTCAnimatedNode
-{
+@implementation FTCAnimatedNode {
     void (^onComplete) ();
 }
 
@@ -69,14 +68,12 @@ typedef struct _ftcIgnoreAnimationFlags {
 @synthesize delegate;
 @synthesize frameRate;
 @synthesize animationSet;
-
 /// from FTCSprite
 @synthesize name;
 @synthesize frameInfoArray = _frameInfoArray;
 
 
--(id) initFromXMLFile:(NSString *)_xmlfile
-{
+- (id)initFromXMLFile:(NSString *)_xmlfile {
     self = [self init];
     if (self) {
         [self fillWithObjects:[FTCParser parseSheetXML:_xmlfile]];
@@ -88,27 +85,36 @@ typedef struct _ftcIgnoreAnimationFlags {
     return self;
 }
 
--(id) initWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *)partAnimation andAnimationName:(NSString *)animationName
-{
+- (id)initWithSprite:(CCSprite *)sprite 
+                andPartAnimation:(FTCPartInfo *)partAnimation 
+                andAnimationName:(NSString *)animationName {
+    
     FTCAnimatedNode *node = [[FTCAnimatedNode alloc] init];
     [node addChild:sprite];
-    self = [self initWithAnimationNode:node andPartAnimation:partAnimation andAnimationName:animationName];
+    self = [self initWithAnimationNode:node 
+                      andPartAnimation:partAnimation 
+                      andAnimationName:animationName];
     
     return self;
 }
 
--(id) initWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation andAnimationName:(NSString *)animationName
-{
+- (id)initWithAnimationNode:(FTCAnimatedNode *)node 
+           andPartAnimation:(FTCPartInfo *)partAnimation 
+           andAnimationName:(NSString *)animationName {
+    
     self = [self init];
     if (self) {
-        [node addAnimation:partAnimation withName:animationName];
-        [self addElement:node withName:[node name] atIndex:[node zOrder]];
+        [node addAnimation:partAnimation 
+                  withName:animationName];
+        
+        [self addElement:node 
+                withName:[node name] 
+                 atIndex:[node zOrder]];
     }
     return self;
 }
 
-- (id)init
-{
+- (id)init {
     self = [super init];
     if (self) {
         [self setChildrenTable:       [NSMutableDictionary dictionary]];
@@ -120,25 +126,24 @@ typedef struct _ftcIgnoreAnimationFlags {
     return self;
 }
 
--(void) pauseAnimation
-{
+- (void)pauseAnimation {
     _isPaused = YES;
 }
 
--(void) resumeAnimation
-{
+- (void)resumeAnimation {
     _isPaused = NO;
 }
 
--(void) stopAnimation
-{
+- (void)stopAnimation {
     currentAnimationLength = 0;
     currentAnimationId     = [NSString string];
 }
 
--(void) playAnimation:(NSString *)_animId loop:(BOOL)_isLoopable wait:(BOOL)_wait
-{
-    if (_wait && currentAnimationLength>0) {
+- (void)playAnimation:(NSString *)_animId 
+                 loop:(BOOL)_isLoopable 
+                 wait:(BOOL)_wait {
+    
+    if (_wait && currentAnimationLength > 0) {
         return;
     }
     
@@ -149,7 +154,7 @@ typedef struct _ftcIgnoreAnimationFlags {
     currentAnimationId = _animId;
     
     
-    for (FTCAnimatedNode *node in self.childrenTable.allValues) {
+    for (FTCAnimatedNode *node in [[self childrenTable] allValues]) {
         [node setCurrentAnimation:currentAnimationId];
     }
     
@@ -164,14 +169,15 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 }
 
--(void) scheduleAnimation
-{
+- (void)scheduleAnimation {
     [scheduler_ unscheduleAllSelectorsForTarget:self];
-    [scheduler_ scheduleSelector:@selector(handleScheduleUpdate:) forTarget:self interval:frameRate/1000 paused:NO];
+    [scheduler_ scheduleSelector:@selector(handleScheduleUpdate:) 
+                       forTarget:self 
+                        interval:[frameRate floatValue] / 1000 
+                          paused:NO];
 }
 
--(void) handleScheduleUpdate:(ccTime)_dt
-{
+- (void)handleScheduleUpdate:(ccTime)_dt {
     if (currentAnimationLength == 0 || _isPaused ) {
         return;
     }
@@ -194,43 +200,43 @@ typedef struct _ftcIgnoreAnimationFlags {
     [self playFrame];
 }
 
--(void) playFrame
-{
-    for (FTCAnimatedNode *animationNode in self.childrenTable.allValues) {
+- (void)playFrame {
+    for (FTCAnimatedNode *animationNode in [[self childrenTable] allValues]) {
         [animationNode applyFrame:intFrame];
     }
 }
 
--(FTCAnimatedNode *) getChildByName:(NSString *)_childname
-{
+- (FTCAnimatedNode *)getChildByName:(NSString *)_childname {
     // build a predicate to look in the table what object has the propery _childname in .name
-    return [self.childrenTable objectForKey:_childname];
+    
+    return [[self childrenTable] objectForKey:_childname];
 }
 
--(int) getDurationForAnimation:(NSString *)_animationId
-{
+- (NSInteger)getDurationForAnimation:(NSString *)_animationId {
     //TODO get duration from dictionary of animations, not from animation events dictionary
-    return [[self.animationEventsTable objectForKey:_animationId] frameCount];
+    return [[[self animationEventsTable] objectForKey:_animationId] frameCount];
 }
 
--(void) addElement:(FTCAnimatedNode *)_element withName:(NSString *)_name atIndex:(int)_index
-{
+- (void)addElement:(FTCAnimatedNode *)_element 
+          withName:(NSString *)_name 
+           atIndex:(int)_index {
+    
     [self addChild:_element z:_index];
 
     [_element setName:_name];
-    [self.childrenTable setValue:_element forKey:_name];
+    
+    [[self childrenTable] setValue:_element forKey:_name];
 }
 
--(void) reorderChildren
-{
-    int totalChildren = self.childrenTable.count;
-    [self.childrenTable.allValues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+- (void)reorderChildren {
+    int totalChildren = [[self childrenTable] count];
+    
+    [[[self childrenTable] allValues]enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [self reorderChild:obj z:totalChildren-idx];
     }];
 }
 
--(void) fillWithObjects:(NSArray *)objects
-{
+- (void)fillWithObjects:(NSArray *)objects {
     for (FTCObjectInfo *info in objects) {
         
         CCSprite *_sprite = [CCSprite spriteWithFile:[info path]];
@@ -238,7 +244,8 @@ typedef struct _ftcIgnoreAnimationFlags {
         // SET ANCHOR P
         CGSize eSize = [_sprite boundingBox].size;
         CGPoint aP = CGPointMake( [info registrationPointX] / eSize.width
-                                , (eSize.height - (-[info registrationPointY])) / eSize.height);
+                                , (eSize.height - (-[info registrationPointY])) 
+                                                  / eSize.height);
         
         [_sprite setAnchorPoint:aP];
         FTCAnimatedNode *newNode = [[FTCAnimatedNode alloc] init];
@@ -249,9 +256,8 @@ typedef struct _ftcIgnoreAnimationFlags {
     }
 }
 
--(void) fillSpritesWithAnimationSet:(FTCAnimationsSet *)_animationSet
-{
-    [self setFrameRate:[_animationSet framerate]];
+- (void)fillSpritesWithAnimationSet:(FTCAnimationsSet *)_animationSet {
+    [self setFrameRate:[_animationSet frameRate]];
     for (FTCAnimationInfo *animation in [_animationSet animations]) {
         for(FTCPartInfo *part in [animation parts]) {
             FTCAnimatedNode *node = [self getChildByName:[part name]];
@@ -261,26 +267,24 @@ typedef struct _ftcIgnoreAnimationFlags {
     [self setAnimationSet:_animationSet];
 }
 
--(void)addAnimation:(FTCPartInfo *)partAnimation withName:(NSString *)animationName
-{
-    [[self frameInfoArray] setObject:[partAnimation framesInfo] forKey:animationName];
+- (void)addAnimation:(FTCPartInfo *)partAnimation 
+            withName:(NSString *)animationName {
+    
+    [[self frameInfoArray] setObject:[partAnimation framesInfo] 
+                              forKey:animationName];
 }
 
--(void) setFirstPose
-{
+- (void)setFirstPose{
     //TODO add delegate
-    
     if (onComplete)
         onComplete();
 }
 
--(void) setCurrentAnimation:(NSString *)_framesId
-{
+- (void)setCurrentAnimation:(NSString *)_framesId {
     currentAnimationInfo = [[self frameInfoArray] objectForKey:_framesId];
 }
 
--(void) applyFrame:(int)_frameindex
-{
+- (void)applyFrame:(NSInteger)_frameindex {
     if (currentAnimationInfo) {
         if (_frameindex < currentAnimationInfo.count) {
             [self applyFrameInfo:[currentAnimationInfo objectAtIndex:_frameindex]];
@@ -288,35 +292,39 @@ typedef struct _ftcIgnoreAnimationFlags {
     }
 }
 
--(void) applyFrameInfo:(FTCFrameInfo *)_frameInfo
-{
-    CGPoint point = CGPointMake([_frameInfo x], [_frameInfo y]);
-    [self setPosition:CGPointMake([_frameInfo x], [_frameInfo y])];
-    
-    //[self setRotation:[_frameInfo rotation]];
-    
-    if (_frameInfo.scaleX!=0) {
+- (BOOL)hasChild {
+    return [self children] != nil;
+}
+
+- (void)setOpacity:(GLubyte)opacity {
+    if([self hasChild]) {
+        CCArray *parent = [self children];
+        
+        for(CCNode *child in parent) {
+            [child setOpacity:opacity];
+        }
+        
+    } else {
+        [(id<CCRGBAProtocol>) self setOpacity:opacity];
+    }
+}
+
+- (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo {
+    CGPoint position = CGPointMake([_frameInfo x], [_frameInfo y]);
+    [self setPosition:position];
+        
+    if ([_frameInfo scaleX] != 0) {
         [self setScaleX:  _frameInfo.scaleX];
     }
     
-    if (_frameInfo.scaleY!=0) {
+    if ([_frameInfo scaleY] != 0) {
         [self setScaleY: _frameInfo.scaleY];
     }
 
     [self setSkewX: -[_frameInfo skewX]];
     [self setSkewY: -[_frameInfo skewY]];
 
-    [self setOpacity:_frameInfo.alpha * 255];
-    
-
-    
-
-    
-    //    if (!_ignoreAlpha) {
-        //TODO addOpacity to all children through loop
-        
-        //[self setOpacity:_frameInfo.alpha * 255];
-//    }
+    [self setOpacity:[_frameInfo alpha] * 255.0f];
 }
 
 

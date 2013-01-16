@@ -13,51 +13,61 @@
 @class    FTCPartInfo;
 @protocol FTCCharacterDelegate;
 
-@interface FTCAnimatedNode : CCNode
-{
-    NSArray                     *currentAnimEvent;
-    
-    int                         intFrame;
-    int                         currentAnimationLength;
-    NSString                    *currentAnimationId;
-    
-    BOOL                        _isPaused;
-    BOOL                        _doesLoop;
+@interface FTCAnimatedNode : CCNode {
+    NSArray     *currentAnimEvent;
+    NSInteger   intFrame;
+    NSInteger   currentAnimationLength;
+    NSString    *currentAnimationId;
+    BOOL        _isPaused;
+    BOOL        _doesLoop;
 }
 
 @property (unsafe_unretained) id<FTCCharacterDelegate> delegate;
-@property float frameRate;
+@property (assign) NSNumber *frameRate;
 
 /*
     use this method to load complite exported from flash file with prefixes
     {_xmlfile}_sheets.xml and {_xmlfile}_animation.xml
  */
-+(FTCAnimatedNode *) animatedNodeFromXMLFile:(NSString *)_xmlfile;
++ (FTCAnimatedNode *)animatedNodeFromXMLFile:(NSString *)_xmlfile;
 
 /*
     use this method to get node with before loaded animation (for 
     purpose of loading animation use FTCParser
  */
-+(FTCAnimatedNode *) animatedNodeWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *)partAnimation;
++ (FTCAnimatedNode *)animatedNodeWithSprite:(CCSprite *)sprite 
+                           andPartAnimation:(FTCPartInfo *)partAnimation;
 /*
     use this method to get enclosed animation.
     E.g. before using this method you create animated robot, and now you want to
          rotate whole robot(with all his parts) at the same time as robot make
          only arms animation
  */
-+(FTCAnimatedNode *) animatedNodeWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation;
++ (FTCAnimatedNode *)animatedNodeWithAnimationNode:(FTCAnimatedNode *)node 
+                                  andPartAnimation:(FTCPartInfo *)partAnimation;
 
 
--(id) initFromXMLFile:(NSString *)_xmlfile;
--(id) initWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *) partAnimation andAnimationName:(NSString *)animationName;
--(id) initWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation andAnimationName:(NSString *)animationName;
+- (id)initFromXMLFile:(NSString *)_xmlfile;
 
--(void) addAnimation:(FTCPartInfo *)partAnimation withName:(NSString *)animationName;
--(void) playAnimation:(NSString *)_animId;
--(void) playAnimation:(NSString *)_animId loop:(BOOL)_isLoopable wait:(BOOL)_wait;
--(void) stopAnimation;
--(void) pauseAnimation;
--(void) resumeAnimation;
+- (id)initWithSprite:(CCSprite *)sprite 
+                andPartAnimation:(FTCPartInfo *)partAnimation 
+                andAnimationName:(NSString *)animationName;
 
+- (id)initWithAnimationNode:(FTCAnimatedNode *)node 
+           andPartAnimation:(FTCPartInfo *)partAnimation 
+           andAnimationName:(NSString *)animationName;
+
+- (void)addAnimation:(FTCPartInfo *)partAnimation 
+            withName:(NSString *)animationName;
+
+- (void)playAnimation:(NSString *)_animId;
+
+- (void)playAnimation:(NSString *)_animId 
+                 loop:(BOOL)_isLoopable 
+                 wait:(BOOL)_wait;
+
+- (void)stopAnimation;
+- (void)pauseAnimation;
+- (void)resumeAnimation;
 
 @end
