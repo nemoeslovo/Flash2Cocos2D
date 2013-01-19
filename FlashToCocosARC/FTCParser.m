@@ -54,28 +54,105 @@
 
 +(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile
 {
-    TBXMLElement *_root    = [self getRootElementFromXML:[NSString stringWithFormat:@"%@_animations.xml", _xmlfile]];
     
-    NSNumber    *frameRate = [NSNumber numberWithFloat:[[TBXML valueOfAttributeNamed:@"frameRate" 
-                                                                          forElement:_root] floatValue]];
+    FTCAnimationsSet *animationSet = [[FTCAnimationsSet alloc] init];
+    NSString *baseFile = [NSString stringWithFormat:@"%@_animations.xml", _xmlfile];
     
-    //float        frameRate = [[TBXML valueOfAttributeNamed:@"frameRate" forElement:_root] floatValue];
+    NSError *error = nil;
+    TBXML *_xmlMaster = [TBXML newTBXMLWithXMLFile:baseFile error:&error];
     
-    // set the character animation (it will be filled with events)
-    NSMutableArray *animations = [NSMutableArray array];
+    TBXMLElement *_root = _xmlMaster.rootXMLElement;
+    if (!_root) return NO;
+    
+    [animationSet setFrameRate:[TBXML valueOfAttributeNamed:@"frameRate" forElement:_root]];
     
     TBXMLElement *_animation = [TBXML childElementNamed:@"Animation" parentElement:_root];
-    while (_animation) {
-        [animations addObject:[self getAnimationInfoFromElement:_animation]];
-        _animation = _animation->nextSibling;
-    }
+    NSMutableArray *animations = [NSMutableArray array];
     
-    FTCAnimationsSet *animationsSet = [[FTCAnimationsSet alloc] init];
+    // set the character animation (it will be filled with events)
+    do {
+        FTCAnimationInfo *animation = [[FTCAnimationInfo alloc] init];
+        [animation setName:[TBXML valueOfAttributeNamed:@"name" forElement:_animation]];
         
-    [animationsSet setFrameRate:frameRate];
-    [animationsSet setAnimations:animations];
-   
-    return animationsSet;
+        TBXMLElement *_part = [TBXML childElementNamed:@"Part" parentElement:_animation];
+        NSMutableArray *parts = [NSMutableArray array];
+        do {
+            
+            FTCPartInfo *partInfo = [[FTCPartInfo alloc] init];
+            [partInfo setName:[TBXML valueOfAttributeNamed:@"name" forElement:_part]];
+            
+            TBXMLElement *_frameInfo = [TBXML childElementNamed:@"Frame" parentElement:_part];
+            NSMutableArray *frames = [NSMutableArray array];
+            
+            if (_frameInfo) {
+                do {
+                    FTCFrameInfo *fi = [[FTCFrameInfo alloc] init];
+                    
+                    
+                    fi.index = [[TBXML valueOfAttributeNamed:@"index" forElement:_frameInfo] intValue];
+                    
+                    fi.x = [[TBXML valueOfAttributeNamed:@"x" forElement:_frameInfo] floatValue];
+                    fi.y = -([[TBXML valueOfAttributeNamed:@"y" forElement:_frameInfo] floatValue]);
+                    
+                    
+                    fi.scaleX = [[TBXML valueOfAttributeNamed:@"scaleX" forElement:_frameInfo] floatValue];
+                    fi.scaleY = [[TBXML valueOfAttributeNamed:@"scaleY" forElement:_frameInfo] floatValue];
+                    
+                    fi.rotation = [[TBXML valueOfAttributeNamed:@"rotation" forElement:_frameInfo] floatValue];
+                    
+                    NSError *noAlpha;
+                    
+                    fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&noAlpha] floatValue];
+                    
+                    if (noAlpha) fi.alpha = 1.0;
+                    
+                    [frames addObject:fi];
+                    
+                } while ((_frameInfo = _frameInfo->nextSibling));
+            }
+            
+            [partInfo setFramesInfo:frames];
+            [parts addObject:partInfo];
+            
+        } while ((_part = _part->nextSibling));
+        [animation setParts:parts];
+        [animation setFrameCount:[[TBXML valueOfAttributeNamed:@"frameCount" forElement:_animation] intValue]];
+        [animations addObject:animation];
+        
+        // Process Events if needed
+        int _animationLength = [[TBXML valueOfAttributeNamed:@"frameCount" forElement:_animation] intValue];
+        
+        NSMutableArray  *__eventsArr = [[NSMutableArray alloc] initWithCapacity:_animationLength];
+        for (int ea=0; ea<_animationLength; ea++) { [__eventsArr addObject:[NSNull null]];};
+        
+        TBXMLElement *_eventXML = [TBXML childElementNamed:@"Marker" parentElement:_animation];
+        
+        if (_eventXML) {
+            do {
+                NSString *eventType = [TBXML valueOfAttributeNamed:@"name" forElement:_eventXML];
+                int     frameIndex   = [[TBXML valueOfAttributeNamed:@"frame" forElement:_eventXML] intValue];
+                
+                FTCEventInfo *_eventInfo = [[FTCEventInfo alloc] init];
+                [_eventInfo setFrameIndex:frameIndex];
+                [_eventInfo setEventType:eventType];
+                
+                [__eventsArr insertObject:_eventInfo atIndex:frameIndex];
+                
+            } while ((_eventXML = [TBXML nextSiblingNamed:@"Marker" searchFromElement:_eventXML]));
+        }
+        
+        FTCAnimEvent *__eventInfo = [[FTCAnimEvent alloc] init];
+        [__eventInfo setFrameCount:_animationLength];
+        [__eventInfo setEventsInfo:__eventsArr];
+        
+        __eventsArr = nil;
+        __eventInfo = nil;
+        
+        
+    } while ((_animation = _animation->nextSibling));
+    [animationSet setAnimations:animations];
+    
+    return animationSet;
 }
 
 +(FTCAnimationInfo *) getAnimationInfoFromElement:(TBXMLElement *)_animation {
@@ -159,9 +236,11 @@
 
 +(FTCFrameInfo *) getFrameInfoFromElement:(TBXMLElement *)_frameInfo
 {
+    if (_frameInfo) {
+        NSLog(@"herna");
+        return nil;
+    }
     FTCFrameInfo *fi = [[FTCFrameInfo alloc] init];
-    
-    fi.index = [[TBXML valueOfAttributeNamed:@"index" forElement:_frameInfo] intValue];
     
     fi.x = [[TBXML valueOfAttributeNamed:@"x" forElement:_frameInfo] floatValue];
     fi.y = -([[TBXML valueOfAttributeNamed:@"y" forElement:_frameInfo] floatValue]);
@@ -171,17 +250,20 @@
     fi.scaleY = [[TBXML valueOfAttributeNamed:@"scaleY" forElement:_frameInfo] floatValue];
     
     fi.rotation = [[TBXML valueOfAttributeNamed:@"rotation" forElement:_frameInfo] floatValue];
-        
+    
     fi.skewX = [[TBXML valueOfAttributeNamed:@"skewX" forElement:_frameInfo] floatValue];
     fi.skewY = [[TBXML valueOfAttributeNamed:@"skewY" forElement:_frameInfo] floatValue];
     
-    NSError *noAlpha = nil;
     
+    
+    NSError *noAlpha = nil;
     fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&noAlpha] floatValue];
     
     if (noAlpha != nil) {
         fi.alpha = 1.0f;
     }
+    
+    fi.index = [[TBXML valueOfAttributeNamed:@"index" forElement:_frameInfo] intValue];
     
     return fi;
 }
