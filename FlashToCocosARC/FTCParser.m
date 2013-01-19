@@ -161,7 +161,6 @@
 {
     FTCFrameInfo *fi = [[FTCFrameInfo alloc] init];
     
-    
     fi.index = [[TBXML valueOfAttributeNamed:@"index" forElement:_frameInfo] intValue];
     
     fi.x = [[TBXML valueOfAttributeNamed:@"x" forElement:_frameInfo] floatValue];
