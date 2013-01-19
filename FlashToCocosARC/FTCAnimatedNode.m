@@ -300,8 +300,10 @@ typedef struct _ftcIgnoreAnimationFlags {
     if([self hasChild]) {
         CCArray *parent = [self children];
         
-        for(CCNode *child in parent) {
-            [child setOpacity:opacity];
+        for(CCNode<CCRGBAProtocol> *child in parent) {
+            if ([child respondsToSelector:@selector(setOpacity:)]) {
+                [child setOpacity:opacity];
+            }
         }
         
     } else {
