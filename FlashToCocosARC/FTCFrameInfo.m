@@ -8,16 +8,25 @@
 
 #import "FTCFrameInfo.h"
 
-@implementation FTCFrameInfo
+@implementation FTCFrameInfo {
+@private
+    CGFloat _a;
+    CGFloat _b;
+    CGFloat _c;
+    CGFloat _d;
+    CGFloat _tx;
+    CGFloat _ty;
+}
+
 
 @synthesize index;
-@synthesize x;
-@synthesize y;
-@synthesize scaleX;
-@synthesize scaleY;
-@synthesize rotation;
 @synthesize alpha;
-@synthesize skewX;
-@synthesize skewY;
+@synthesize a = _a;
+@synthesize b = _b;
+@synthesize c = _c;
+@synthesize d = _d;
+@synthesize tx = _tx;
+@synthesize ty = _ty;
+
 
 @end

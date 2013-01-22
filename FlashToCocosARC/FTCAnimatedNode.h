@@ -25,6 +25,7 @@
 @property (unsafe_unretained) id<FTCCharacterDelegate> delegate;
 @property (assign) NSNumber *frameRate;
 
+
 /*
     use this method to load complite exported from flash file with prefixes
     {_xmlfile}_sheets.xml and {_xmlfile}_animation.xml

@@ -91,20 +91,22 @@
                     
                     fi.index = [[TBXML valueOfAttributeNamed:@"index" forElement:_frameInfo] intValue];
                     
-                    fi.x = [[TBXML valueOfAttributeNamed:@"x" forElement:_frameInfo] floatValue];
-                    fi.y = -([[TBXML valueOfAttributeNamed:@"y" forElement:_frameInfo] floatValue]);
+                    fi.a = [[TBXML valueOfAttributeNamed:@"a" forElement:_frameInfo] floatValue];
+                    fi.b = ([[TBXML valueOfAttributeNamed:@"b" forElement:_frameInfo] floatValue]);
                     
                     
-                    fi.scaleX = [[TBXML valueOfAttributeNamed:@"scaleX" forElement:_frameInfo] floatValue];
-                    fi.scaleY = [[TBXML valueOfAttributeNamed:@"scaleY" forElement:_frameInfo] floatValue];
+                    fi.c = [[TBXML valueOfAttributeNamed:@"c" forElement:_frameInfo] floatValue];
+                    fi.d = [[TBXML valueOfAttributeNamed:@"d" forElement:_frameInfo] floatValue];
                     
-                    fi.rotation = [[TBXML valueOfAttributeNamed:@"rotation" forElement:_frameInfo] floatValue];
-                    
+                    fi.tx = [[TBXML valueOfAttributeNamed:@"tx" forElement:_frameInfo] floatValue];
+                    fi.ty = [[TBXML valueOfAttributeNamed:@"ty" forElement:_frameInfo] floatValue];
+
                     NSError *noAlpha;
                     
                     fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&noAlpha] floatValue];
-                    
-                    if (noAlpha) fi.alpha = 1.0;
+                    if (noAlpha) {
+                        fi.alpha = 1.0;
+                    }
                     
                     [frames addObject:fi];
                     
@@ -241,19 +243,19 @@
         return nil;
     }
     FTCFrameInfo *fi = [[FTCFrameInfo alloc] init];
-    
-    fi.x = [[TBXML valueOfAttributeNamed:@"x" forElement:_frameInfo] floatValue];
-    fi.y = -([[TBXML valueOfAttributeNamed:@"y" forElement:_frameInfo] floatValue]);
-    
-    
-    fi.scaleX = [[TBXML valueOfAttributeNamed:@"scaleX" forElement:_frameInfo] floatValue];
-    fi.scaleY = [[TBXML valueOfAttributeNamed:@"scaleY" forElement:_frameInfo] floatValue];
-    
-    fi.rotation = [[TBXML valueOfAttributeNamed:@"rotation" forElement:_frameInfo] floatValue];
-    
-    fi.skewX = [[TBXML valueOfAttributeNamed:@"skewX" forElement:_frameInfo] floatValue];
-    fi.skewY = [[TBXML valueOfAttributeNamed:@"skewY" forElement:_frameInfo] floatValue];
-    
+//
+//    fi.x = [[TBXML valueOfAttributeNamed:@"x" forElement:_frameInfo] floatValue];
+//    fi.y = -([[TBXML valueOfAttributeNamed:@"y" forElement:_frameInfo] floatValue]);
+//
+//
+//    fi.scaleX = [[TBXML valueOfAttributeNamed:@"scaleX" forElement:_frameInfo] floatValue];
+//    fi.scaleY = [[TBXML valueOfAttributeNamed:@"scaleY" forElement:_frameInfo] floatValue];
+//
+//    fi.rotation = [[TBXML valueOfAttributeNamed:@"rotation" forElement:_frameInfo] floatValue];
+//
+//    fi.skewX = [[TBXML valueOfAttributeNamed:@"skewX" forElement:_frameInfo] floatValue];
+//    fi.skewY = [[TBXML valueOfAttributeNamed:@"skewY" forElement:_frameInfo] floatValue];
+//
     
     
     NSError *noAlpha = nil;

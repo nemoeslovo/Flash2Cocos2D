@@ -28,6 +28,7 @@ typedef struct _ftcIgnoreAnimationFlags {
     BOOL       ignoreAlpha;
 } ignoreAnimationFlags;
 
+@property(nonatomic) BOOL isAnimatedNodeTransform;
 @property(retain) FTCAnimationsSet *animationSet;
 
 //table for objects, that can response to applyFrame:(int) selector
@@ -61,6 +62,9 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 @implementation FTCAnimatedNode {
     void (^onComplete) ();
+
+@private
+    BOOL _isAnimatedNodeTransform;
 }
 
 @synthesize childrenTable;
@@ -71,6 +75,7 @@ typedef struct _ftcIgnoreAnimationFlags {
 /// from FTCSprite
 @synthesize name;
 @synthesize frameInfoArray = _frameInfoArray;
+@synthesize isAnimatedNodeTransform = _isAnimatedNodeTransform;
 
 
 - (id)initFromXMLFile:(NSString *)_xmlfile {
@@ -312,21 +317,15 @@ typedef struct _ftcIgnoreAnimationFlags {
 }
 
 - (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo {
-    CGPoint position = CGPointMake([_frameInfo x], [_frameInfo y]);
-    [self setPosition:position];
-        
-    if ([_frameInfo scaleX] != 0) {
-        [self setScaleX:  _frameInfo.scaleX];
-    }
-    
-    if ([_frameInfo scaleY] != 0) {
-        [self setScaleY: _frameInfo.scaleY];
-    }
+    transform_ = CGAffineTransformMake(   _frameInfo.a
+                                      ,  - _frameInfo.b
+                                      ,  - _frameInfo.c
+                                      ,   _frameInfo.d
+                                      ,   _frameInfo.tx / 2
+                                      , - _frameInfo.ty / 2);
 
-    [self setSkewX: -[_frameInfo skewX]];
-    [self setSkewY: -[_frameInfo skewY]];
+ //    [self setOpacity:_frameInfo.alpha];
 
-    [self setOpacity:[_frameInfo alpha] * 255.0f];
 }
 
 

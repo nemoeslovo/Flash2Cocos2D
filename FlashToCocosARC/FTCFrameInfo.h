@@ -11,13 +11,12 @@
 @interface FTCFrameInfo : NSObject
 
 @property NSInteger   index;
-@property CGFloat x;
-@property CGFloat y;
-@property CGFloat rotation;
-@property CGFloat scaleX;
-@property CGFloat scaleY;
+@property CGFloat a;
+@property CGFloat b;
+@property CGFloat c;
+@property CGFloat d;
+@property CGFloat tx;
+@property CGFloat ty;
 @property CGFloat alpha;
-@property CGFloat skewX;
-@property CGFloat skewY;
 
 @end
