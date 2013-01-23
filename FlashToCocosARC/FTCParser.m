@@ -46,6 +46,7 @@
                                                  forElement:_texture] intValue]];
         
         [objectsList addObject:objectInfo];
+
     };
     [TBXML iterateElementsForQuery:@"Texture" fromElement:_texturesheet withBlock:block];
     
@@ -101,13 +102,24 @@
                     fi.tx = [[TBXML valueOfAttributeNamed:@"tx" forElement:_frameInfo] floatValue];
                     fi.ty = [[TBXML valueOfAttributeNamed:@"ty" forElement:_frameInfo] floatValue];
 
-                    NSError *noAlpha;
-                    
-                    fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&noAlpha] floatValue];
-                    if (noAlpha) {
+                    NSError *error = nil;
+                    fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&error] floatValue];
+                    if (error) {
                         fi.alpha = 1.0;
                     }
-                    
+
+                    error = nil;
+                    fi.rightMargined = [[TBXML valueOfAttributeNamed:@"rightMargined" forElement:_frameInfo error:&error] boolValue];
+                    if (error) {
+                        fi.rightMargined = NO;
+                    }
+
+                    error = nil;
+                    fi.bottomMargined = [[TBXML valueOfAttributeNamed:@"bottomMargined" forElement:_frameInfo error:&error] boolValue];
+                    if (error) {
+                        fi.bottomMargined = NO;
+                    }
+
                     [frames addObject:fi];
                     
                 } while ((_frameInfo = _frameInfo->nextSibling));

@@ -72,11 +72,25 @@ typedef struct _ftcIgnoreAnimationFlags {
 @synthesize delegate;
 @synthesize frameRate;
 @synthesize animationSet;
-/// from FTCSprite
 @synthesize name;
-@synthesize frameInfoArray = _frameInfoArray;
+@synthesize frameInfoArray          = _frameInfoArray;
 @synthesize isAnimatedNodeTransform = _isAnimatedNodeTransform;
 
+
++ (FTCAnimatedNode *)animatedNodeFromXMLFile:(NSString *)_xmlfile {
+    id node = [[self alloc] initFromXMLFile:_xmlfile];
+    return node;
+}
+
++ (FTCAnimatedNode *)animatedNodeWithSprite:(CCSprite *)sprite andPartAnimation:(FTCPartInfo *)partAnimation andAnimationNode:(NSString *)name {
+    id node = [[self alloc] initWithSprite:sprite andPartAnimation:partAnimation andAnimationName:name];
+    return node;
+}
+
++ (FTCAnimatedNode *)animatedNodeWithAnimationNode:(FTCAnimatedNode *)node andPartAnimation:(FTCPartInfo *)partAnimation andAnimationName:(NSString *)name {
+    id node_ = [[self alloc] initWithAnimationNode:node andPartAnimation:partAnimation andAnimationName:name];
+    return node_;
+}
 
 - (id)initFromXMLFile:(NSString *)_xmlfile {
     self = [self init];
@@ -86,34 +100,34 @@ typedef struct _ftcIgnoreAnimationFlags {
         [self setFirstPose];
         [self scheduleAnimation];
     }
-    
+
     return self;
 }
 
-- (id)initWithSprite:(CCSprite *)sprite 
-                andPartAnimation:(FTCPartInfo *)partAnimation 
+- (id)initWithSprite:(CCSprite *)sprite
+                andPartAnimation:(FTCPartInfo *)partAnimation
                 andAnimationName:(NSString *)animationName {
-    
+
     FTCAnimatedNode *node = [[FTCAnimatedNode alloc] init];
     [node addChild:sprite];
-    self = [self initWithAnimationNode:node 
-                      andPartAnimation:partAnimation 
+    self = [self initWithAnimationNode:node
+                      andPartAnimation:partAnimation
                       andAnimationName:animationName];
-    
+
     return self;
 }
 
-- (id)initWithAnimationNode:(FTCAnimatedNode *)node 
-           andPartAnimation:(FTCPartInfo *)partAnimation 
+- (id)initWithAnimationNode:(FTCAnimatedNode *)node
+           andPartAnimation:(FTCPartInfo *)partAnimation
            andAnimationName:(NSString *)animationName {
-    
+
     self = [self init];
     if (self) {
-        [node addAnimation:partAnimation 
+        [node addAnimation:partAnimation
                   withName:animationName];
-        
-        [self addElement:node 
-                withName:[node name] 
+
+        [self addElement:node
+                withName:[node name]
                  atIndex:[node zOrder]];
     }
     return self;
@@ -127,7 +141,7 @@ typedef struct _ftcIgnoreAnimationFlags {
         [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
         self->currentAnimationId    = [NSString string];
     }
-    
+
     return self;
 }
 
@@ -144,10 +158,14 @@ typedef struct _ftcIgnoreAnimationFlags {
     currentAnimationId     = [NSString string];
 }
 
-- (void)playAnimation:(NSString *)_animId 
-                 loop:(BOOL)_isLoopable 
+- (void)playAnimation:(NSString *)_animId {
+    [self playAnimation:_animId loop:NO wait:YES];
+}
+
+- (void)playAnimation:(NSString *)_animId
+                 loop:(BOOL)_isLoopable
                  wait:(BOOL)_wait {
-    
+
     if (_wait && currentAnimationLength > 0) {
         return;
     }
@@ -312,14 +330,14 @@ typedef struct _ftcIgnoreAnimationFlags {
         }
         
     } else {
-        [(id<CCRGBAProtocol>) self setOpacity:opacity];
+//        [(id<CCRGBAProtocol>) self setOpacity:opacity];
     }
 }
 
-- (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo {
+- (void)applyFrameInfo:(FTCFrameInfo *)   _frameInfo {
     transform_ = CGAffineTransformMake(   _frameInfo.a
-                                      ,  - _frameInfo.b
-                                      ,  - _frameInfo.c
+                                      , - _frameInfo.b
+                                      , - _frameInfo.c
                                       ,   _frameInfo.d
                                       ,   _frameInfo.tx / 2
                                       , - _frameInfo.ty / 2);

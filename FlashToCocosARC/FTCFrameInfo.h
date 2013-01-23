@@ -18,5 +18,12 @@
 @property CGFloat tx;
 @property CGFloat ty;
 @property CGFloat alpha;
+@property BOOL    leftMargined;
+@property BOOL    bottomMargined;
+@property BOOL    topMargined;
+@property BOOL    rightMargined;
+
+- (BOOL)isMargined;
+
 
 @end
