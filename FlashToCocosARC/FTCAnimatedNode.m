@@ -319,21 +319,6 @@ typedef struct _ftcIgnoreAnimationFlags {
     return [self children] != nil;
 }
 
-- (void)setOpacity:(GLubyte)opacity {
-    if([self hasChild]) {
-        CCArray *parent = [self children];
-        
-        for(CCNode<CCRGBAProtocol> *child in parent) {
-            if ([child respondsToSelector:@selector(setOpacity:)]) {
-                [child setOpacity:opacity];
-            }
-        }
-        
-    } else {
-//        [(id<CCRGBAProtocol>) self setOpacity:opacity];
-    }
-}
-
 - (void)applyFrameInfo:(FTCFrameInfo *)   _frameInfo {
     transform_ = CGAffineTransformMake(   _frameInfo.a
                                       , - _frameInfo.b
@@ -342,7 +327,7 @@ typedef struct _ftcIgnoreAnimationFlags {
                                       ,   _frameInfo.tx / 2
                                       , - _frameInfo.ty / 2);
 
- //    [self setOpacity:_frameInfo.alpha];
+     [self setOpacity:_frameInfo.alpha * 255];
 
 }
 
