@@ -285,6 +285,8 @@ typedef struct _ftcIgnoreAnimationFlags {
         for(FTCPartInfo *part in [animation parts]) {
             FTCAnimatedNode *node = [self getChildByName:[part name]];
             [node addAnimation:part withName:[animation name]];
+            FTCFrameInfo *info = [[part framesInfo] objectAtIndex:0];
+            [node applyFrameInfo:info];
         }
     }
     [self setAnimationSet:_animationSet];
@@ -292,12 +294,12 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 - (void)addAnimation:(FTCPartInfo *)partAnimation 
             withName:(NSString *)animationName {
-    
+
     [[self frameInfoArray] setObject:[partAnimation framesInfo] 
                               forKey:animationName];
 }
 
-- (void)setFirstPose{
+- (void)setFirstPose {
     //TODO add delegate
     if (onComplete)
         onComplete();
@@ -319,7 +321,11 @@ typedef struct _ftcIgnoreAnimationFlags {
     return [self children] != nil;
 }
 
-- (void)applyFrameInfo:(FTCFrameInfo *)   _frameInfo {
+- (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo {
+    [self applyFrameInfo:_frameInfo isDirty:NO];
+}
+
+- (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo isDirty:(BOOL)isDirty {
     transform_ = CGAffineTransformMake(   _frameInfo.a
                                       , - _frameInfo.b
                                       , - _frameInfo.c
@@ -327,8 +333,8 @@ typedef struct _ftcIgnoreAnimationFlags {
                                       ,   _frameInfo.tx / 2
                                       , - _frameInfo.ty / 2);
 
-     [self setOpacity:_frameInfo.alpha * 255];
-
+    [self setOpacity:_frameInfo.alpha * 255];
+    self->isTransformDirty_ = isDirty;
 }
 
 
