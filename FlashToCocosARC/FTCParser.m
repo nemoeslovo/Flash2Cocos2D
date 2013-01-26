@@ -25,14 +25,23 @@
 
 +(NSArray *)parseSheetXML:(NSString *)_xmlfile
 {
-    TBXMLElement *_root  = [self getRootElementFromXML:[NSString stringWithFormat:@"%@_sheets.xml", _xmlfile]];
- 
-    TBXMLElement   *_texturesheet = [TBXML childElementNamed:@"TextureSheet" parentElement:_root];
-    NSMutableArray *objectsList   = [NSMutableArray array];
+    NSString *baseFile = [NSString stringWithFormat:@"%@_sheets.xml", _xmlfile];
     
-    TBXMLIterateBlock block = ^(TBXMLElement *_texture) {
+    NSError *error = nil;
+    TBXML *_xmlMaster = [TBXML newTBXMLWithXMLFile:baseFile error:&error];
+    
+    // root
+    TBXMLElement *_root = _xmlMaster.rootXMLElement;
+    
+    if (!_root) return NO;
+    
+    TBXMLElement *_texturesheet = [TBXML childElementNamed:@"TextureSheet" parentElement:_root];
+    
+    TBXMLElement *_texture = [TBXML childElementNamed:@"Texture" parentElement:_texturesheet];
+    NSMutableArray *objectsList   = [NSMutableArray array];
+    do {
         FTCObjectInfo *objectInfo = [[FTCObjectInfo alloc] init];
-
+        
         [objectInfo setName:[TBXML valueOfAttributeNamed:@"name"
                                               forElement:_texture]];
         [objectInfo setPath:[TBXML  valueOfAttributeNamed:@"path"
@@ -46,13 +55,44 @@
                                                  forElement:_texture] intValue]];
         
         [objectsList addObject:objectInfo];
-
-    };
-    [TBXML iterateElementsForQuery:@"Texture" fromElement:_texturesheet withBlock:block];
+        
+    } while ((_texture = _texture->nextSibling));
     
-    return objectsList;
+     return objectsList;
 }
-
+//
+//+(NSArray *)parseSheetXML:(NSString *)_xmlfile
+//{
+//    TBXMLElement *_root  = [self getRootElementFromXML:[NSString stringWithFormat:@"%@_sheets.xml", _xmlfile]];
+// 
+//    TBXMLElement   *_texturesheet = [TBXML childElementNamed:@"TextureSheet" parentElement:_root];
+//    NSMutableArray *objectsList   = [NSMutableArray array];
+//
+//    TBXMLElement *_texture = [TBXML childElementNamed:@"Texture" parentElement:_texturesheet];
+//    
+//    do {
+//        FTCObjectInfo *objectInfo = [[FTCObjectInfo alloc] init];
+//
+//        [objectInfo setName:[TBXML valueOfAttributeNamed:@"name"
+//                                              forElement:_texture]];
+//        [objectInfo setPath:[TBXML  valueOfAttributeNamed:@"path"
+//                                               forElement:_texture]];
+//        [objectInfo setRegistrationPointX:[[TBXML valueOfAttributeNamed:@"registrationPointX"
+//                                                             forElement:_texture] floatValue]];
+//        //don't know why minus
+//        [objectInfo setRegistrationPointY:-([[TBXML valueOfAttributeNamed:@"registrationPointY"
+//                                                               forElement:_texture] floatValue])];
+//        [objectInfo setZIndex:[[TBXML valueOfAttributeNamed:@"zIndex"
+//                                                 forElement:_texture] intValue]];
+//        
+//        [objectsList addObject:objectInfo];
+//
+//    } while ((_texture = _texture->nextSibling));
+//
+//    
+//    return objectsList;
+//}
+//
 +(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile
 {
     
