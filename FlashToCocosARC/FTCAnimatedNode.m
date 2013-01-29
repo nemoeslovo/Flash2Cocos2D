@@ -273,6 +273,7 @@ typedef struct _ftcIgnoreAnimationFlags {
         [_sprite setAnchorPoint:aP];
         FTCAnimatedNode *newNode = [[FTCAnimatedNode alloc] init];
         [newNode addChild:_sprite];
+        [newNode setContentSize:[_sprite contentSize]];
         [newNode setName:[info name]];
         
         [self addElement:newNode withName:[info name] atIndex:[info zIndex]];
@@ -281,14 +282,33 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 - (void)fillSpritesWithAnimationSet:(FTCAnimationsSet *)_animationSet {
     [self setFrameRate:[_animationSet frameRate]];
+    NSInteger maxX = 0;
+    NSInteger minX = 0;
+    NSInteger maxY = 0;
+    NSInteger minY = 0;
     for (FTCAnimationInfo *animation in [_animationSet animations]) {
         for(FTCPartInfo *part in [animation parts]) {
             FTCAnimatedNode *node = [self getChildByName:[part name]];
             [node addAnimation:part withName:[animation name]];
             FTCFrameInfo *info = [[part framesInfo] objectAtIndex:0];
             [node applyFrameInfo:info];
+
+            if (info.tx + [node contentSize].width/2 > maxX) {
+                maxX = info.tx + [node contentSize].width/2;
+            } else if (info.tx - [node contentSize].width/2 <minX) {
+                minX = info.tx - [node contentSize].width/2;
+            }
+
+            if (info.ty + [node contentSize].height/2 > maxY) {
+                maxY = info.ty + [node contentSize].height/2;
+            } else if (info.ty - [node contentSize].height/2 < minY) {
+                minY = info.ty - [node contentSize].height/2;
+            }
+
         }
     }
+    [self setContentSize:CGSizeMake(maxX - minX, maxY - minY)];
+
     [self setAnimationSet:_animationSet];
 }
 

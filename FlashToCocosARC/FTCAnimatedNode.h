@@ -13,7 +13,7 @@
 @class    FTCPartInfo;
 @protocol FTCCharacterDelegate;
 
-@interface FTCAnimatedNode : CCNode {
+@interface FTCAnimatedNode : CCMenuItem {
     NSArray     *currentAnimEvent;
     NSInteger   intFrame;
     NSInteger   currentAnimationLength;
