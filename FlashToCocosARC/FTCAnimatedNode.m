@@ -307,7 +307,8 @@ typedef struct _ftcIgnoreAnimationFlags {
 
         }
     }
-    [self setContentSize:CGSizeMake(maxX - minX, maxY - minY)];
+    [self setContentSize:CGSizeMake((maxX - minX)/2, (maxY - minY)/2)];
+    [self setAnchorPoint:ccp(0.5, 0.5)];
 
     [self setAnimationSet:_animationSet];
 }
