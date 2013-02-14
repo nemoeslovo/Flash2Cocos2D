@@ -93,8 +93,13 @@ typedef struct _ftcIgnoreAnimationFlags {
 }
 
 - (id)initFromXMLFile:(NSString *)_xmlfile {
-    self = [self init];
+    self = [super init];
     if (self) {
+        [self setChildrenTable:       [NSMutableDictionary dictionary]];
+        [self setAnimationEventsTable:[NSMutableDictionary dictionary]];
+        [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
+        self->currentAnimationId    = [NSString string];
+
         [self fillWithObjects:[FTCParser parseSheetXML:_xmlfile]];
         [self fillSpritesWithAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
         [self setFirstPose];
@@ -102,6 +107,10 @@ typedef struct _ftcIgnoreAnimationFlags {
     }
 
     return self;
+}
+
+- (id)init {
+    return [self initFromXMLFile:nil];
 }
 
 - (id)initWithSprite:(CCSprite *)sprite
@@ -130,18 +139,6 @@ typedef struct _ftcIgnoreAnimationFlags {
                 withName:[node name]
                  atIndex:[node zOrder]];
     }
-    return self;
-}
-
-- (id)init {
-    self = [super init];
-    if (self) {
-        [self setChildrenTable:       [NSMutableDictionary dictionary]];
-        [self setAnimationEventsTable:[NSMutableDictionary dictionary]];
-        [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
-        self->currentAnimationId    = [NSString string];
-    }
-
     return self;
 }
 
