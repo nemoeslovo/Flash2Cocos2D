@@ -11,7 +11,7 @@
 
 @class    FTCAnimEvent;
 @class    FTCPartInfo;
-@protocol FTCCharacterDelegate;
+@protocol FTCAnimatedNodeDelegate;
 
 @interface FTCAnimatedNode : CCMenuItem {
     NSArray     *currentAnimEvent;
@@ -22,7 +22,7 @@
     BOOL        _doesLoop;
 }
 
-@property (unsafe_unretained) id<FTCCharacterDelegate> delegate;
+@property (unsafe_unretained) id<FTCAnimatedNodeDelegate> delegate;
 @property (assign) NSNumber *frameRate;
 
 
@@ -71,4 +71,9 @@
 - (void)pauseAnimation;
 - (void)resumeAnimation;
 
+@end
+
+@protocol FTCAnimatedNodeDelegate
+@optional
+- (void)onAnimationEnd:(id)object;
 @end

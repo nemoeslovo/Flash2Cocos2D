@@ -61,8 +61,6 @@ typedef struct _ftcIgnoreAnimationFlags {
 @end
 
 @implementation FTCAnimatedNode {
-    void (^onComplete) ();
-
 @private
     BOOL _isAnimatedNodeTransform;
 }
@@ -153,6 +151,7 @@ typedef struct _ftcIgnoreAnimationFlags {
 - (void)stopAnimation {
     currentAnimationLength = 0;
     currentAnimationId     = [NSString string];
+    [delegate onAnimationEnd:self];
 }
 
 - (void)playAnimation:(NSString *)_animId {
@@ -319,8 +318,6 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 - (void)setFirstPose {
     //TODO add delegate
-    if (onComplete)
-        onComplete();
 }
 
 - (void)setCurrentAnimation:(NSString *)_framesId {
