@@ -75,5 +75,5 @@
 
 @protocol FTCAnimatedNodeDelegate
 @optional
-- (void)onAnimationEnd:(id)object;
+- (void)onAnimationEnded:(id)object;
 @end

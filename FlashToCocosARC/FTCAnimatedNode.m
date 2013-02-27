@@ -151,7 +151,7 @@ typedef struct _ftcIgnoreAnimationFlags {
 - (void)stopAnimation {
     currentAnimationLength = 0;
     currentAnimationId     = [NSString string];
-    [delegate onAnimationEnd:self];
+    [delegate onAnimationEnded:self];
 }
 
 - (void)playAnimation:(NSString *)_animId {
