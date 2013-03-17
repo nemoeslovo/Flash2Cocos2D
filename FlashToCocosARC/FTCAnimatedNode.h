@@ -11,6 +11,7 @@
 
 @class    FTCAnimEvent;
 @class    FTCPartInfo;
+@class    FTCAnimationsSet;
 @protocol FTCAnimatedNodeDelegate;
 
 @interface FTCAnimatedNode : CCMenuItem {
@@ -48,13 +49,17 @@
                                   andPartAnimation:(FTCPartInfo *)partAnimation;
 
 
++ (FTCAnimatedNode *)animatedNodeWithObjectsArray:(NSArray *)_objects andAnimationSet:(FTCAnimationsSet *)_animationSet;
+
 - (id)initFromXMLFile:(NSString *)_xmlfile;
 
 - (id)initWithSprite:(CCSprite *)sprite 
                 andPartAnimation:(FTCPartInfo *)partAnimation 
                 andAnimationName:(NSString *)animationName;
 
-- (id)initWithAnimationNode:(FTCAnimatedNode *)node 
+- (id)initWithObjectsArray:(NSArray *)_objects andAnimationSet:(FTCAnimationsSet *)_animationsSet;
+
+- (id)initWithAnimationNode:(FTCAnimatedNode *)node
            andPartAnimation:(FTCPartInfo *)partAnimation 
            andAnimationName:(NSString *)animationName;
 

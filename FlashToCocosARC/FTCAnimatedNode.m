@@ -90,21 +90,16 @@ typedef struct _ftcIgnoreAnimationFlags {
     return node_;
 }
 
++ (FTCAnimatedNode *)animatedNodeWithObjectsArray:(NSArray *)_objects
+                                  andAnimationSet:(FTCAnimationsSet *)_animationSet {
+    id node = [[self alloc] initWithObjectsArray:_objects
+                                 andAnimationSet:_animationSet];
+    return node;
+}
+
 - (id)initFromXMLFile:(NSString *)_xmlfile {
-    self = [super init];
-    if (self) {
-        [self setChildrenTable:       [NSMutableDictionary dictionary]];
-        [self setAnimationEventsTable:[NSMutableDictionary dictionary]];
-        [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
-        self->currentAnimationId    = [NSString string];
-
-        [self fillWithObjects:[FTCParser parseSheetXML:_xmlfile]];
-        [self fillSpritesWithAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
-        [self setFirstPose];
-        [self scheduleAnimation];
-    }
-
-    return self;
+    return [self initWithObjectsArray:[FTCParser parseSheetXML:_xmlfile]
+                      andAnimationSet:[FTCParser parseAnimationXML:_xmlfile]];
 }
 
 - (id)initWithSprite:(CCSprite *)sprite
@@ -116,6 +111,24 @@ typedef struct _ftcIgnoreAnimationFlags {
     return [self initWithAnimationNode:node
                       andPartAnimation:partAnimation
                       andAnimationName:animationName];
+}
+
+- (id)initWithObjectsArray:(NSArray *)_objects
+           andAnimationSet:(FTCAnimationsSet *)_animationsSet {
+    self = [super init];
+    if (self) {
+        [self setChildrenTable:       [NSMutableDictionary dictionary]];
+        [self setAnimationEventsTable:[NSMutableDictionary dictionary]];
+        [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
+        self->currentAnimationId    = [NSString string];
+
+        [self fillWithObjects:_objects];
+        [self fillSpritesWithAnimationSet:_animationsSet];
+        [self setFirstPose];
+        [self scheduleAnimation];
+    }
+
+    return self;
 }
 
 - (id)initWithAnimationNode:(FTCAnimatedNode *)node
