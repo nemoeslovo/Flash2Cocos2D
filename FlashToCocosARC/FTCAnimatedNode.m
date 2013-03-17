@@ -107,21 +107,15 @@ typedef struct _ftcIgnoreAnimationFlags {
     return self;
 }
 
-- (id)init {
-    return [self initFromXMLFile:nil];
-}
-
 - (id)initWithSprite:(CCSprite *)sprite
                 andPartAnimation:(FTCPartInfo *)partAnimation
                 andAnimationName:(NSString *)animationName {
 
     FTCAnimatedNode *node = [[FTCAnimatedNode alloc] init];
     [node addChild:sprite];
-    self = [self initWithAnimationNode:node
+    return [self initWithAnimationNode:node
                       andPartAnimation:partAnimation
                       andAnimationName:animationName];
-
-    return self;
 }
 
 - (id)initWithAnimationNode:(FTCAnimatedNode *)node
