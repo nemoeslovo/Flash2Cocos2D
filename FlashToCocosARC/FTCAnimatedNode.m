@@ -113,6 +113,11 @@ typedef struct _ftcIgnoreAnimationFlags {
                       andAnimationName:animationName];
 }
 
+- (id)init {
+    return [self initWithObjectsArray:nil
+                      andAnimationSet:nil];
+}
+
 - (id)initWithObjectsArray:(NSArray *)_objects
            andAnimationSet:(FTCAnimationsSet *)_animationsSet {
     self = [super init];
@@ -122,8 +127,12 @@ typedef struct _ftcIgnoreAnimationFlags {
         [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
         self->currentAnimationId    = [NSString string];
 
-        [self fillWithObjects:_objects];
-        [self fillSpritesWithAnimationSet:_animationsSet];
+        if (_objects) {
+            [self fillWithObjects:_objects];
+        }
+        if (_animationsSet) {
+            [self fillSpritesWithAnimationSet:_animationsSet];
+        }
         [self setFirstPose];
         [self scheduleAnimation];
     }
