@@ -16,8 +16,6 @@
     CGFloat _d;
     CGFloat _tx;
     CGFloat _ty;
-    BOOL _topMargined;
-    BOOL _rightMargined;
 }
 
 
@@ -33,8 +31,8 @@
 //TODO make manual setters that set opposite properties to NO
 @synthesize leftMargined;
 @synthesize bottomMargined;
-@synthesize topMargined = _topMargined;
-@synthesize rightMargined = _rightMargined;
+@synthesize topMargined;
+@synthesize rightMargined;
 
 
 - (id)init {
@@ -42,14 +40,14 @@
     if (self) {
         leftMargined   = NO;
         bottomMargined = NO;
-        _topMargined   = NO;
-        _rightMargined = NO;
+        topMargined    = NO;
+        rightMargined  = NO;
     }
     return self;
 }
 
 - (BOOL)isMargined {
-    return leftMargined || _rightMargined || _topMargined || bottomMargined;
+    return leftMargined || rightMargined || topMargined || bottomMargined;
 }
 
 @end

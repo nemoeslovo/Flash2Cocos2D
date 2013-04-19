@@ -14,6 +14,7 @@
 #import "FTCAnimationsSet.h"
 #import "FTCAnimationInfo.h"
 #import "FTCPartInfo.h"
+#import "ccMacros.h"
 
 @interface FTCParser()
     +(TBXMLElement*)  getRootElementFromXML:(NSString *)_xmlFile;
@@ -153,6 +154,17 @@
                     if (error) {
                         fi.rightMargined = NO;
                     }
+
+                    BOOL topMargined = [[TBXML valueOfAttributeNamed:@"topMargined" forElement:_frameInfo error:&error] boolValue];
+                    if (topMargined) {
+                        CCLOG(@"@dandandan topMargined", [partInfo name]);
+                    }
+                    [fi setTopMargined:topMargined];
+
+                    if (error) {
+                        fi.topMargined = NO;
+                    }
+
 
                     error = nil;
                     fi.bottomMargined = [[TBXML valueOfAttributeNamed:@"bottomMargined" forElement:_frameInfo error:&error] boolValue];
