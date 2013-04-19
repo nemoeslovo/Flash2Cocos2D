@@ -47,7 +47,7 @@
 }
 
 - (BOOL)isMargined {
-    return leftMargined || rightMargined || topMargined || bottomMargined;
+    return (leftMargined || rightMargined || topMargined || bottomMargined);
 }
 
 @end

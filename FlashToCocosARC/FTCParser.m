@@ -155,16 +155,11 @@
                         fi.rightMargined = NO;
                     }
 
-                    BOOL topMargined = [[TBXML valueOfAttributeNamed:@"topMargined" forElement:_frameInfo error:&error] boolValue];
-                    if (topMargined) {
-                        CCLOG(@"@dandandan topMargined", [partInfo name]);
-                    }
-                    [fi setTopMargined:topMargined];
-
+                    error = nil;
+                    fi.topMargined = [[TBXML valueOfAttributeNamed:@"topMargined" forElement:_frameInfo error:&error] boolValue];
                     if (error) {
                         fi.topMargined = NO;
                     }
-
 
                     error = nil;
                     fi.bottomMargined = [[TBXML valueOfAttributeNamed:@"bottomMargined" forElement:_frameInfo error:&error] boolValue];
