@@ -156,6 +156,12 @@
                     }
 
                     error = nil;
+                    fi.leftMargined = [[TBXML valueOfAttributeNamed:@"leftMargined" forElement:_frameInfo error:&error] boolValue];
+                    if (error) {
+                        fi.leftMargined = NO;
+                    }
+
+                    error = nil;
                     fi.topMargined = [[TBXML valueOfAttributeNamed:@"topMargined" forElement:_frameInfo error:&error] boolValue];
                     if (error) {
                         fi.topMargined = NO;
