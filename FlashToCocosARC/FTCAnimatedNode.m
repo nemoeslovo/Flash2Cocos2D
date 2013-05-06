@@ -15,6 +15,7 @@
 #import "FTCPartInfo.h"
 #import "FTCFrameInfo.h"
 #import "cocos2d.h"
+#import "FTCPresetPart.h"
 
 
 @interface FTCAnimatedNode() {
@@ -40,6 +41,8 @@ typedef struct _ftcIgnoreAnimationFlags {
 //table of name -> animation that this AnimatedNode able response
 @property (nonatomic, strong) NSMutableDictionary   *frameInfoArray;
 
+@property (nonatomic, strong) NSMutableDictionary   *animationPresets;
+
 - (void)setFirstPose;
 - (void)playFrame:(NSInteger)_frameIndex fromAnimation:(NSString *)_animationId;
 - (void)playFrame;
@@ -58,6 +61,9 @@ typedef struct _ftcIgnoreAnimationFlags {
 - (void)applyFrameWithId:(NSInteger)_frameindex;
 - (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo;
 
+- (void)addAnimationPresetWithKey:(FTCPresetPart *)_presetPart vaList:(id)args;
+
+- (void)addAnimationPresetWithKey:(NSString *)_key andAnimationPresets:(NSArray *)_presetParts;
 @end
 
 @implementation FTCAnimatedNode {
@@ -194,7 +200,7 @@ typedef struct _ftcIgnoreAnimationFlags {
     }
     
 //    currentAnimEvent = [[self.animationEventsTable objectForKey:_animId] eventsInfo];
-    
+
     //TODO make dictionary
     for(FTCAnimationInfo *animation in [[self animationSet] animations]) {
         if ([[animation name] isEqualToString:_animId]) {
@@ -366,6 +372,34 @@ typedef struct _ftcIgnoreAnimationFlags {
 
     [self setOpacity:_frameInfo.alpha * 255];
     self->isTransformDirty_ = isDirty;
+}
+
+- (void)addAnimationPresetWithKey:(NSString *)_key
+                   andPresetParts:(FTCPresetPart *)_presetPart, ... NS_REQUIRES_NIL_TERMINATION {
+    va_list args;
+    va_start(args, _presetPart);
+
+    [self addAnimationPresetWithKey:_presetPart vaList:args];
+
+    va_end(args);
+}
+
+- (void)addAnimationPresetWithKey:(FTCPresetPart *)_presetPart vaList:(va_list)args {
+    NSMutableArray *array = nil;
+    array = [NSMutableArray arrayWithObject:_presetPart];
+    CCMenuItem *i = va_arg(args, CCMenuItem*);
+    while(i) {
+        [array addObject:i];
+        i = va_arg(args, CCMenuItem*);
+    }
+}
+
+- (void)addAnimationPresetWithKey:(NSString *)_key andAnimationPresets:(NSArray *)_presetParts {
+    if (![self animationPresets]) {
+        _animationPresets = [NSMutableDictionary dictionary];
+    }
+
+    [[self animationPresets] setObject:_presetParts forKey:_key];
 }
 
 

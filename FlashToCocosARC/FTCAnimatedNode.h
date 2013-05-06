@@ -66,6 +66,8 @@
 - (void)addAnimation:(FTCPartInfo *)partAnimation 
             withName:(NSString *)animationName;
 
+- (void)addAnimationPresetWithKey:(NSString *)_key andPresetParts:(FTCPresetPart *)_presetPart, ...;
+
 - (void)playAnimation:(NSString *)_animId;
 
 - (void)playAnimation:(NSString *)_animId 
