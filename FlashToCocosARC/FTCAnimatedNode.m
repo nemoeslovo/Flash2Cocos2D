@@ -194,7 +194,10 @@ typedef struct _ftcCurrentPreset {
     currentAnimationLength = 0;
     currentAnimationId     = [NSString string];
     if (_currentPreset.isPlayed) {
-        if (_currentPreset.repeatNumber == [_currentPresetParts[_currentPreset.index] numberOfRepetitions]) {
+
+        NSInteger neededRepetitions =[_currentPresetParts[_currentPreset.index] numberOfRepetitions] - 1;
+
+        if (_currentPreset.repeatNumber == neededRepetitions) {
             _currentPreset.index++;
             _currentPreset.repeatNumber = 0;
             if (_currentPreset.index >= [_currentPresetParts count]) {
