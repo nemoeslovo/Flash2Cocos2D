@@ -42,6 +42,12 @@ typedef struct _ftcIgnoreAnimationFlags {
     BOOL       ignoreAlpha;
 } ignoreAnimationFlags;
 
+typedef struct _ftcCurrentPreset {
+    NSInteger index;
+    NSInteger repeatNumber;
+    BOOL      isPlayed;
+} currentPreset;
+
 @property(nonatomic) BOOL isAnimatedNodeTransform;
 @property(retain) FTCAnimationsSet *animationSet;
 
@@ -79,15 +85,9 @@ typedef struct _ftcIgnoreAnimationFlags {
 
 @implementation FTCAnimatedNode {
 @private
-    BOOL _isAnimatedNodeTransform;
-
-    BOOL _isPresetPlayed;
-    NSArray   *_currentPresetParts;
-
-
-
-    NSInteger _currentPresetPartIndex;
-    NSInteger _currentPresetPartRepeatNumber;
+    BOOL           _isAnimatedNodeTransform;
+    NSArray       *_currentPresetParts;
+    currentPreset  _currentPreset;
 }
 
 @synthesize childrenTable;
@@ -160,7 +160,7 @@ typedef struct _ftcIgnoreAnimationFlags {
         }
         [self setFirstPose];
         [self scheduleAnimation];
-        _isPresetPlayed = NO;
+        _currentPreset.isPlayed = NO;
     }
 
     return self;
@@ -193,18 +193,18 @@ typedef struct _ftcIgnoreAnimationFlags {
 - (void)stopAnimation {
     currentAnimationLength = 0;
     currentAnimationId     = [NSString string];
-    if (_isPresetPlayed) {
-        if (_currentPresetPartRepeatNumber == [_currentPresetParts[_currentPresetPartIndex] numberOfRepetitions]) {
-            _currentPresetPartIndex++;
-            _currentPresetPartRepeatNumber = 0;
-            if (_currentPresetPartIndex >= [_currentPresetParts count]) {
-                _isPresetPlayed = NO;
+    if (_currentPreset.isPlayed) {
+        if (_currentPreset.repeatNumber == [_currentPresetParts[_currentPreset.index] numberOfRepetitions]) {
+            _currentPreset.index++;
+            _currentPreset.repeatNumber = 0;
+            if (_currentPreset.index >= [_currentPresetParts count]) {
+                _currentPreset.isPlayed = NO;
             }
         } else {
-            _currentPresetPartRepeatNumber++;
+            _currentPreset.repeatNumber++;
         }
 
-        if (_isPresetPlayed) {
+        if (_currentPreset.isPlayed) {
             [self playNeededPresetPart];
         } else {
             [delegate onAnimationEnded:self];
@@ -213,8 +213,8 @@ typedef struct _ftcIgnoreAnimationFlags {
 }
 
 - (void)playNeededPresetPart {
-    [self playAnimation:[_currentPresetParts[_currentPresetPartIndex] animationName]];
-    _isPresetPlayed = YES;
+    [self playAnimation:[_currentPresetParts[_currentPreset.index] animationName]];
+    _currentPreset.isPlayed = YES;
 }
 
 - (void)playAnimation:(NSString *)_animId {
@@ -420,9 +420,9 @@ typedef struct _ftcIgnoreAnimationFlags {
     if (presetParts) {
 
         //reset params
-        _currentPresetParts            = presetParts;
-        _currentPresetPartIndex        = 0;
-        _currentPresetPartRepeatNumber = 0;
+        _currentPresetParts         = presetParts;
+        _currentPreset.index        = 0;
+        _currentPreset.repeatNumber = 0;
 
         /*
          * start playing first animation in purpose to handle
