@@ -80,7 +80,6 @@ typedef struct _ftcCurrentPreset {
 - (void)applyFrameWithId:(NSInteger)_frameindex;
 - (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo;
 
-- (void)addAnimationPresetWithKey:(NSString *)_key andAnimationPresets:(NSArray *)_presetParts;
 @end
 
 @implementation FTCAnimatedNode {
@@ -350,7 +349,13 @@ typedef struct _ftcCurrentPreset {
     NSInteger minY = 0;
     for (FTCAnimationInfo *animation in [_animationSet animations]) {
         for(FTCPartInfo *part in [animation parts]) {
+
             FTCAnimatedNode *node = [self getChildByName:[part name]];
+            
+            if (!node) {
+                NSLog(@"dandandan node is nil. node expected name is: %@", [part name]);
+            }
+            
             [node addAnimation:part withName:[animation name]];
             FTCFrameInfo *info = [[part framesInfo] objectAtIndex:0];
             [node applyFrameInfo:info];
@@ -440,7 +445,7 @@ typedef struct _ftcCurrentPreset {
                    andPresetParts:(FTCPresetPart *)_presetPart, ... NS_REQUIRES_NIL_TERMINATION {
 
     NSMutableArray *presetParts = [NSMutableArray array];
-    vaToArray(_presetPart, presetParts)
+    vaToArray(_presetPart, presetParts);
     [self addAnimationPresetWithKey:_key
                 andAnimationPresets:presetParts];
 }

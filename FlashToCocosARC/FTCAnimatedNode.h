@@ -71,6 +71,8 @@
 
 - (void)addAnimationPresetWithKey:(NSString *)_key andPresetParts:(FTCPresetPart *)_presetPart, ...;
 
+- (void)addAnimationPresetWithKey:(NSString *)_key andAnimationPresets:(NSArray *)_presetParts;
+
 - (void)playAnimation:(NSString *)_animId;
 
 - (void)playAnimation:(NSString *)_animId 
