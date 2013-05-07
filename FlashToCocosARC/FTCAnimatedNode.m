@@ -74,14 +74,20 @@ typedef struct _ftcIgnoreAnimationFlags {
 - (void)applyFrameWithId:(NSInteger)_frameindex;
 - (void)applyFrameInfo:(FTCFrameInfo *)_frameInfo;
 
-- (void)addAnimationPresetWithKey:(FTCPresetPart *)_presetPart vaList:(id)args;
-
 - (void)addAnimationPresetWithKey:(NSString *)_key andAnimationPresets:(NSArray *)_presetParts;
 @end
 
 @implementation FTCAnimatedNode {
 @private
     BOOL _isAnimatedNodeTransform;
+
+    BOOL _isPresetPlayed;
+    NSArray   *_currentPresetParts;
+
+
+
+    NSInteger _currentPresetPartIndex;
+    NSInteger _currentPresetPartRepeatNumber;
 }
 
 @synthesize childrenTable;
@@ -154,6 +160,7 @@ typedef struct _ftcIgnoreAnimationFlags {
         }
         [self setFirstPose];
         [self scheduleAnimation];
+        _isPresetPlayed = NO;
     }
 
     return self;
@@ -186,7 +193,28 @@ typedef struct _ftcIgnoreAnimationFlags {
 - (void)stopAnimation {
     currentAnimationLength = 0;
     currentAnimationId     = [NSString string];
-    [delegate onAnimationEnded:self];
+    if (_isPresetPlayed) {
+        if (_currentPresetPartRepeatNumber == [_currentPresetParts[_currentPresetPartIndex] numberOfRepetitions]) {
+            _currentPresetPartIndex++;
+            _currentPresetPartRepeatNumber = 0;
+            if (_currentPresetPartIndex >= [_currentPresetParts count]) {
+                _isPresetPlayed = NO;
+            }
+        } else {
+            _currentPresetPartRepeatNumber++;
+        }
+
+        if (_isPresetPlayed) {
+            [self playNeededPresetPart];
+        } else {
+            [delegate onAnimationEnded:self];
+        }
+    }
+}
+
+- (void)playNeededPresetPart {
+    [self playAnimation:[_currentPresetParts[_currentPresetPartIndex] animationName]];
+    _isPresetPlayed = YES;
 }
 
 - (void)playAnimation:(NSString *)_animId {
@@ -402,8 +430,8 @@ typedef struct _ftcIgnoreAnimationFlags {
          * and start next animation or repeat current
          */
         [self playNeededPresetPart];
-}
     }
+}
 
 - (void)addAnimationPresetWithKey:(NSString *)_key
                    andPresetParts:(FTCPresetPart *)_presetPart, ... NS_REQUIRES_NIL_TERMINATION {

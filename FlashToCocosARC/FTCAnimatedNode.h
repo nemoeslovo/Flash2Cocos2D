@@ -13,6 +13,7 @@
 @class    FTCPartInfo;
 @class    FTCAnimationsSet;
 @protocol FTCAnimatedNodeDelegate;
+@class FTCPresetPart;
 
 @interface FTCAnimatedNode : CCMenuItem {
     NSArray     *currentAnimEvent;
@@ -65,6 +66,8 @@
 
 - (void)addAnimation:(FTCPartInfo *)partAnimation 
             withName:(NSString *)animationName;
+
+- (void)playAnimationPreset:(NSString *)_key;
 
 - (void)addAnimationPresetWithKey:(NSString *)_key andPresetParts:(FTCPresetPart *)_presetPart, ...;
 

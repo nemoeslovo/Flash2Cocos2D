@@ -24,4 +24,5 @@
 @property NSString  *animationName;
 @property NSInteger  numberOfRepetitions;
 
++ (id)partNamed:(NSString *)_name repeated:(NSInteger)_count;
 @end

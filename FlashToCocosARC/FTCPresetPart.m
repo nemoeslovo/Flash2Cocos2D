@@ -14,7 +14,7 @@
     NSInteger _numberOfRepetitions;
 }
 
-@synthesize animationName = _animationName;
+@synthesize animationName       = _animationName;
 @synthesize numberOfRepetitions = _numberOfRepetitions;
 
 
