@@ -17,6 +17,19 @@
 #import "cocos2d.h"
 #import "FTCPresetPart.h"
 
+//convert va_args to NSArray
+#define vaToArray(item, array)  \
+id eachObject; \
+va_list argumentList; \
+if (item) { \
+    [array addObject:item]; \
+    va_start(argumentList, item); \
+    while (eachObject = va_arg(argumentList, id)) { \
+        [array addObject: eachObject];  \
+    } \
+    va_end(argumentList); \
+}
+
 
 @interface FTCAnimatedNode() {
     NSArray         *currentAnimationInfo;
@@ -374,24 +387,31 @@ typedef struct _ftcIgnoreAnimationFlags {
     self->isTransformDirty_ = isDirty;
 }
 
+- (void)playAnimationPreset:(NSString *)_key {
+    NSArray *presetParts = [_animationPresets objectForKey:_key];
+    if (presetParts) {
+
+        //reset params
+        _currentPresetParts            = presetParts;
+        _currentPresetPartIndex        = 0;
+        _currentPresetPartRepeatNumber = 0;
+
+        /*
+         * start playing first animation in purpose to handle
+         * it's end in stopAnimation when it's finished
+         * and start next animation or repeat current
+         */
+        [self playNeededPresetPart];
+}
+    }
+
 - (void)addAnimationPresetWithKey:(NSString *)_key
                    andPresetParts:(FTCPresetPart *)_presetPart, ... NS_REQUIRES_NIL_TERMINATION {
-    va_list args;
-    va_start(args, _presetPart);
 
-    [self addAnimationPresetWithKey:_presetPart vaList:args];
-
-    va_end(args);
-}
-
-- (void)addAnimationPresetWithKey:(FTCPresetPart *)_presetPart vaList:(va_list)args {
-    NSMutableArray *array = nil;
-    array = [NSMutableArray arrayWithObject:_presetPart];
-    CCMenuItem *i = va_arg(args, CCMenuItem*);
-    while(i) {
-        [array addObject:i];
-        i = va_arg(args, CCMenuItem*);
-    }
+    NSMutableArray *presetParts = [NSMutableArray array];
+    vaToArray(_presetPart, presetParts)
+    [self addAnimationPresetWithKey:_key
+                andAnimationPresets:presetParts];
 }
 
 - (void)addAnimationPresetWithKey:(NSString *)_key andAnimationPresets:(NSArray *)_presetParts {
