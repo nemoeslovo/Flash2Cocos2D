@@ -204,12 +204,11 @@ typedef struct _ftcCurrentPreset {
         } else {
             _currentPreset.repeatNumber++;
         }
-
-        if (_currentPreset.isPlayed) {
-            [self playNeededPresetPart];
-        } else {
-            [delegate onAnimationEnded:self];
-        }
+    }
+    if (_currentPreset.isPlayed) {
+        [self playNeededPresetPart];
+    } else {
+        [delegate onAnimationEnded:self];
     }
 }
 
@@ -249,7 +248,6 @@ typedef struct _ftcCurrentPreset {
             currentAnimationLength = [animation frameCount];
         }
     }
-
 }
 
 - (void)scheduleAnimation {
