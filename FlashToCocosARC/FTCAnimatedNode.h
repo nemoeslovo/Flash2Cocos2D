@@ -24,8 +24,19 @@
     BOOL        _doesLoop;
 }
 
-@property (unsafe_unretained) id<FTCAnimatedNodeDelegate> delegate;
-@property (assign) NSNumber *frameRate;
+@property (unsafe_unretained) id<FTCAnimatedNodeDelegate>  delegate;
+
+@property (assign)            NSNumber                    *frameRate;
+
+/*
+* preset - a sequence of small animations, each of which can
+* be repeated several times. it is not recommended to work with the dictionary directly
+* , it is better to use a methods
+*    - (void)addAnimationPresetWithKey:(NSString *)_key andPresetParts:(FTCPresetPart *)_presetPart, ...;
+*    and
+*    - (void)playAnimationPreset:(NSString *)_key;
+*/
+@property (nonatomic, strong) NSMutableDictionary         *animationPresets;
 
 
 /*
@@ -72,6 +83,8 @@
 - (void)addAnimationPresetWithKey:(NSString *)_key andPresetParts:(FTCPresetPart *)_presetPart, ...;
 
 - (void)addAnimationPresetWithKey:(NSString *)_key andAnimationPresets:(NSArray *)_presetParts;
+
+- (NSInteger)animationPresetsCount;
 
 - (void)playAnimation:(NSString *)_animId;
 

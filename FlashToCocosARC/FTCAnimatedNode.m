@@ -60,7 +60,6 @@ typedef struct _ftcCurrentPreset {
 //table of name -> animation that this AnimatedNode able response
 @property (nonatomic, strong) NSMutableDictionary   *frameInfoArray;
 
-@property (nonatomic, strong) NSMutableDictionary   *animationPresets;
 
 - (void)setFirstPose;
 - (void)playFrame:(NSInteger)_frameIndex fromAnimation:(NSString *)_animationId;
@@ -456,6 +455,10 @@ typedef struct _ftcCurrentPreset {
     }
 
     [[self animationPresets] setObject:_presetParts forKey:_key];
+}
+
+- (NSInteger)animationPresetsCount {
+    return [[self animationPresets] count];
 }
 
 
