@@ -14,10 +14,6 @@
 #import "FTCAnimationsSet.h"
 #import "FTCAnimationInfo.h"
 #import "FTCPartInfo.h"
-#import "ccMacros.h"
-
-
-static const CGFloat IPAD_FACTOR  = UIUserInterfaceIdiomPad ? 2.0 : 1.0;
 
 @interface FTCParser()
     +(TBXMLElement*)  getRootElementFromXML:(NSString *)_xmlFile;
@@ -51,11 +47,11 @@ static const CGFloat IPAD_FACTOR  = UIUserInterfaceIdiomPad ? 2.0 : 1.0;
         [objectInfo setPath:[TBXML  valueOfAttributeNamed:@"path"
                                                forElement:_texture]];
 
-        [objectInfo setRegistrationPointX:IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"registrationPointX"
-                                                             forElement:_texture] floatValue]];
+        [objectInfo setRegistrationPointX:[FTCParser iPadFactor] * [[TBXML valueOfAttributeNamed:@"registrationPointX"
+                                                                                      forElement:_texture] floatValue]];
         //don't know why minus
-        [objectInfo setRegistrationPointY:-IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"registrationPointY"
-                                                               forElement:_texture] floatValue]];
+        [objectInfo setRegistrationPointY:-[FTCParser iPadFactor] * [[TBXML valueOfAttributeNamed:@"registrationPointY"
+                                                                                       forElement:_texture] floatValue]];
         [objectInfo setZIndex:[[TBXML valueOfAttributeNamed:@"zIndex"
                                                  forElement:_texture] intValue]];
         
@@ -64,6 +60,14 @@ static const CGFloat IPAD_FACTOR  = UIUserInterfaceIdiomPad ? 2.0 : 1.0;
     } while ((_texture = _texture->nextSibling));
     
      return objectsList;
+}
+
++ (CGFloat)iPadFactor {
+    CGFloat iPadFactor = 1;
+    if (UIUserInterfaceIdiomPad == UIDevice.currentDevice.userInterfaceIdiom) {
+        iPadFactor = 2;
+    }
+    return iPadFactor;
 }
 //
 //+(NSArray *)parseSheetXML:(NSString *)_xmlfile
@@ -144,8 +148,8 @@ static const CGFloat IPAD_FACTOR  = UIUserInterfaceIdiomPad ? 2.0 : 1.0;
                     fi.c = [[TBXML valueOfAttributeNamed:@"c" forElement:_frameInfo] floatValue];
                     fi.d = [[TBXML valueOfAttributeNamed:@"d" forElement:_frameInfo] floatValue];
                     
-                    fi.tx = IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"tx" forElement:_frameInfo] floatValue];
-                    fi.ty = IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"ty" forElement:_frameInfo] floatValue];
+                    fi.tx = [FTCParser iPadFactor] * [[TBXML valueOfAttributeNamed:@"tx" forElement:_frameInfo] floatValue];
+                    fi.ty = [FTCParser iPadFactor] * [[TBXML valueOfAttributeNamed:@"ty" forElement:_frameInfo] floatValue];
 
                     NSError *error = nil;
                     fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&error] floatValue];
