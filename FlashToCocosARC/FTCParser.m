@@ -16,6 +16,9 @@
 #import "FTCPartInfo.h"
 #import "ccMacros.h"
 
+
+static const CGFloat IPAD_FACTOR  = UIUserInterfaceIdiomPad ? 2.0 : 1.0;
+
 @interface FTCParser()
     +(TBXMLElement*)  getRootElementFromXML:(NSString *)_xmlFile;
     +(FTCFrameInfo *) getFrameInfoFromElement:(TBXMLElement *)_frameInfo;
@@ -47,11 +50,12 @@
                                               forElement:_texture]];
         [objectInfo setPath:[TBXML  valueOfAttributeNamed:@"path"
                                                forElement:_texture]];
-        [objectInfo setRegistrationPointX:[[TBXML valueOfAttributeNamed:@"registrationPointX"
+
+        [objectInfo setRegistrationPointX:IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"registrationPointX"
                                                              forElement:_texture] floatValue]];
         //don't know why minus
-        [objectInfo setRegistrationPointY:-([[TBXML valueOfAttributeNamed:@"registrationPointY"
-                                                               forElement:_texture] floatValue])];
+        [objectInfo setRegistrationPointY:-IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"registrationPointY"
+                                                               forElement:_texture] floatValue]];
         [objectInfo setZIndex:[[TBXML valueOfAttributeNamed:@"zIndex"
                                                  forElement:_texture] intValue]];
         
@@ -134,14 +138,14 @@
                     fi.index = [[TBXML valueOfAttributeNamed:@"index" forElement:_frameInfo] intValue];
                     
                     fi.a = [[TBXML valueOfAttributeNamed:@"a" forElement:_frameInfo] floatValue];
-                    fi.b = ([[TBXML valueOfAttributeNamed:@"b" forElement:_frameInfo] floatValue]);
+                    fi.b = [[TBXML valueOfAttributeNamed:@"b" forElement:_frameInfo] floatValue];
                     
                     
                     fi.c = [[TBXML valueOfAttributeNamed:@"c" forElement:_frameInfo] floatValue];
                     fi.d = [[TBXML valueOfAttributeNamed:@"d" forElement:_frameInfo] floatValue];
                     
-                    fi.tx = [[TBXML valueOfAttributeNamed:@"tx" forElement:_frameInfo] floatValue];
-                    fi.ty = [[TBXML valueOfAttributeNamed:@"ty" forElement:_frameInfo] floatValue];
+                    fi.tx = IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"tx" forElement:_frameInfo] floatValue];
+                    fi.ty = IPAD_FACTOR * [[TBXML valueOfAttributeNamed:@"ty" forElement:_frameInfo] floatValue];
 
                     NSError *error = nil;
                     fi.alpha = [[TBXML valueOfAttributeNamed:@"alpha" forElement:_frameInfo error:&error] floatValue];
