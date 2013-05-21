@@ -309,8 +309,7 @@
     __eventInfo = nil;
 }
 
-+(FTCFrameInfo *) getFrameInfoFromElement:(TBXMLElement *)_frameInfo
-{
++(FTCFrameInfo *) getFrameInfoFromElement:(TBXMLElement *)_frameInfo {
     if (_frameInfo) {
         NSLog(@"herna");
         return nil;
@@ -343,8 +342,7 @@
     return fi;
 }
 
-+(TBXMLElement*) getRootElementFromXML:(NSString *)_xmlFile
-{
++(TBXMLElement*) getRootElementFromXML:(NSString *)_xmlFile {
     NSError  *error      = nil;
     TBXML    *_xmlMaster = [TBXML newTBXMLWithXMLFile:_xmlFile error:&error] ;
     
@@ -357,6 +355,9 @@
     return _root;
 }
 
+/**
+* if images bigger then needed use this method for scale down transformation matrix
+*/
 + (void)scaleSheet:(NSArray *)_objects withAnimationSet:(FTCAnimationsSet *)_animationsSet byScale:(CGFloat)scale {
     for (FTCObjectInfo *objectInfo in _objects) {
         [objectInfo setRegistrationPointX:scale * [objectInfo registrationPointX]];
