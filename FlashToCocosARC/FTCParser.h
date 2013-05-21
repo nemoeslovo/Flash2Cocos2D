@@ -22,4 +22,6 @@
 +(NSArray *) parseSheetXML:(NSString *)_xmlfile;
 +(FTCAnimationsSet *) parseAnimationXML:(NSString *)_xmlfile;
 
+
++ (void)scaleSheet:(NSArray *)_objects withAnimationSet:(FTCAnimationsSet *)_animationsSet byScale:(CGFloat)scale;
 @end

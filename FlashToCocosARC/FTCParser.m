@@ -357,4 +357,20 @@
     return _root;
 }
 
++ (void)scaleSheet:(NSArray *)_objects withAnimationSet:(FTCAnimationsSet *)_animationsSet byScale:(CGFloat)scale {
+    for (FTCObjectInfo *objectInfo in _objects) {
+        [objectInfo setRegistrationPointX:scale * [objectInfo registrationPointX]];
+        [objectInfo setRegistrationPointY:scale * [objectInfo registrationPointY]];
+    }
+
+    for (FTCAnimationInfo *animationInfo in [_animationsSet animations]) {
+        for (FTCPartInfo *partInfo in [animationInfo parts]) {
+            for (FTCFrameInfo *frameInfo in [partInfo framesInfo]) {
+                [frameInfo setTx:scale * [frameInfo tx]];
+                [frameInfo setTy:scale * [frameInfo ty]];
+            }
+        }
+    }
+}
+
 @end
