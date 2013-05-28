@@ -93,9 +93,10 @@ typedef struct _ftcCurrentPreset {
 @synthesize delegate;
 @synthesize frameRate;
 @synthesize animationSet;
-@synthesize name;
 @synthesize frameInfoArray          = _frameInfoArray;
 @synthesize isAnimatedNodeTransform = _isAnimatedNodeTransform;
+@synthesize doesLoop = _doesLoop;
+@dynamic    name;
 
 
 + (FTCAnimatedNode *)animatedNodeFromXMLFile:(NSString *)_xmlfile {

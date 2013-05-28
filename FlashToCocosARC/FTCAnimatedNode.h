@@ -38,6 +38,10 @@
 */
 @property (nonatomic, strong) NSMutableDictionary         *animationPresets;
 
+/**
+* doesLoop - loop animation or not
+*/
+@property (nonatomic) BOOL doesLoop;
 
 /*
     use this method to load complite exported from flash file with prefixes
