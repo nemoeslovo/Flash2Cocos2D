@@ -63,7 +63,7 @@ typedef struct _ftcCurrentPreset {
 
 - (void)setFirstPose;
 - (void)playFrame:(NSInteger)_frameIndex fromAnimation:(NSString *)_animationId;
-- (void)playFrame;
+- (void)playFrame:(NSInteger)frameIndex;
 - (void)scheduleAnimation;
 - (NSString *)getCurrentAnimation;
 - (NSInteger)getDurationForAnimation:(NSString *)_animationId;
@@ -278,12 +278,12 @@ typedef struct _ftcCurrentPreset {
         intFrame = 0;
     }
     
-    [self playFrame];
+    [self playFrame:intFrame];
 }
 
-- (void)playFrame {
+- (void)playFrame:(NSInteger)frameIndex {
     for (FTCAnimatedNode *animationNode in [[self childrenTable] allValues]) {
-        [animationNode applyFrame:intFrame];
+        [animationNode applyFrame:frameIndex];
     }
 }
 
@@ -385,7 +385,7 @@ typedef struct _ftcCurrentPreset {
 }
 
 - (void)setFirstPose {
-    //TODO add delegate
+    [self playFrame:0];
 }
 
 - (void)setCurrentAnimation:(NSString *)_framesId {
