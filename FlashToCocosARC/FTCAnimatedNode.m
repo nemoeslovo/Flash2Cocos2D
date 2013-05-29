@@ -320,8 +320,14 @@ typedef struct _ftcCurrentPreset {
 
 - (void)fillWithObjects:(NSArray *)objects {
     for (FTCObjectInfo *info in objects) {
-        
-        CCSprite *_sprite = [CCSprite spriteWithFile:[info path]];
+
+        CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[info path]];
+        CCSprite *_sprite;
+        if(frame) {
+            _sprite = [CCSprite spriteWithSpriteFrame:frame];
+        } else {
+           _sprite = [CCSprite spriteWithFile:[info path]];
+        }
         
         // SET ANCHOR P
         CGSize eSize = [_sprite boundingBox].size;
