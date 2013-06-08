@@ -357,7 +357,7 @@ typedef struct _ftcCurrentPreset {
             FTCAnimatedNode *node = [self getChildByName:[part name]];
             
             if (!node) {
-                NSLog(@"dandandan node is nil. node expected name is: %@", [part name]);
+                CCLOG(@"dandandan node is nil. node expected name is: %@", [part name]);
             }
             
             [node addAnimation:part withName:[animation name]];

@@ -311,7 +311,6 @@
 
 +(FTCFrameInfo *) getFrameInfoFromElement:(TBXMLElement *)_frameInfo {
     if (_frameInfo) {
-        NSLog(@"herna");
         return nil;
     }
     FTCFrameInfo *fi = [[FTCFrameInfo alloc] init];
