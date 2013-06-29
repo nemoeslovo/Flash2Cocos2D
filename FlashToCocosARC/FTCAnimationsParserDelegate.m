@@ -99,7 +99,7 @@
     
     //frame
     if ( [elementName isEqualToString:TAG_FRAME]) {
-        [[_currentPartInfo framesInfo] addObject:_currentPartInfo];
+        [[_currentPartInfo framesInfo] addObject:_currentFrameInfo];
         return;
     }
     
