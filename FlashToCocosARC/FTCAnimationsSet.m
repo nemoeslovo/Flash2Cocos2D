@@ -11,6 +11,14 @@
 @implementation FTCAnimationsSet
 
 @synthesize frameRate = _frameRate;
-@synthesize animations;
+@synthesize animations = _animations;
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _animations = [NSMutableArray array];
+    }
+    return self;
+}
 
 @end

@@ -11,7 +11,14 @@
 @implementation FTCPartInfo
 
 @synthesize name;
-@synthesize framesInfo;
+@synthesize framesInfo = _framesInfo;
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        _framesInfo = [NSMutableArray array];
+    }
+    return self;
+}
 
 @end

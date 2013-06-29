@@ -10,7 +10,7 @@
 
 @interface FTCAnimationsSet : NSObject
 
-@property (assign) NSNumber   *frameRate;
-@property (retain) NSArray    *animations;
+@property (assign) NSNumber       *frameRate;
+@property (retain) NSMutableArray *animations;
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TBXML.h"
 
 @class FTCAnimatedNode;
 @class FTCAnimationsSet;

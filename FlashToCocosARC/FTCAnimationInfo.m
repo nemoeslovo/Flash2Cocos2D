@@ -11,7 +11,15 @@
 @implementation FTCAnimationInfo
 
 @synthesize name;
-@synthesize parts;
+@synthesize parts = _parts;
 @synthesize frameCount;
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _parts = [NSMutableArray array];
+    }
+    return self;
+}
 
 @end

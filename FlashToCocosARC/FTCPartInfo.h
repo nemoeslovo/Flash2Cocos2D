@@ -10,7 +10,7 @@
 
 @interface FTCPartInfo : NSObject
 
-@property (retain) NSString *name;
-@property (retain) NSArray  *framesInfo;
+@property (retain) NSString        *name;
+@property (retain) NSMutableArray  *framesInfo;
 
 @end
