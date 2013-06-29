@@ -1,0 +1,18 @@
+<Textures>
+  <TextureSheet name="dog">
+    <Texture name="bottom_left_leg" width="42" height="70" path="dog_bottom_left_leg.png" registrationPointX="31.50" registrationPointY="33.00" zIndex="13"/>
+    <Texture name="top_left_leg" width="28" height="89" path="dog_top_left_leg.png" registrationPointX="6.00" registrationPointY="36.00" zIndex="12"/>
+    <Texture name="nose" width="60" height="48" path="dog_nose.png" registrationPointX="1.50" registrationPointY="1.50" zIndex="11"/>
+    <Texture name="tongue" width="22" height="27" path="dog_tongue.png" registrationPointX="2.00" registrationPointY="1.50" zIndex="10"/>
+    <Texture name="left_eye" width="29" height="29" path="dog_left_eye.png" registrationPointX="14.50" registrationPointY="14.00" zIndex="9"/>
+    <Texture name="mouth" width="19" height="16" path="dog_mouth.png" registrationPointX="1.00" registrationPointY="2.50" zIndex="8"/>
+    <Texture name="whole_mouth" width="41" height="32" path="dog_whole_mouth.png" registrationPointX="2.00" registrationPointY="1.50" zIndex="7"/>
+    <Texture name="right_eye" width="24" height="24" path="dog_right_eye.png" registrationPointX="12.00" registrationPointY="12.00" zIndex="6"/>
+    <Texture name="body" width="86" height="124" path="dog_body.png" registrationPointX="36.00" registrationPointY="62.00" zIndex="5"/>
+    <Texture name="head" width="62" height="99" path="dog_head.png" registrationPointX="31.00" registrationPointY="30.50" zIndex="4"/>
+    <Texture name="tail" width="48" height="63" path="dog_tail.png" registrationPointX="1.50" registrationPointY="1.50" zIndex="3"/>
+    <Texture name="bottom_right_leg" width="28" height="89" path="dog_bottom_right_leg.png" registrationPointX="6.00" registrationPointY="36.00" zIndex="2"/>
+    <Texture name="right_ear" width="46" height="55" path="dog_right_ear.png" registrationPointX="23.00" registrationPointY="27.50" zIndex="1"/>
+    <Texture name="top_right_leg" width="42" height="70" path="dog_top_right_leg.png" registrationPointX="31.50" registrationPointY="32.50"/>
+  </TextureSheet>
+</Textures>
