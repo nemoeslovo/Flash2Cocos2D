@@ -149,7 +149,7 @@ typedef struct _ftcCurrentPreset {
         [self setChildrenTable:       [NSMutableDictionary dictionary]];
         [self setAnimationEventsTable:[NSMutableDictionary dictionary]];
         [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
-        self->_currentAnimationId    = [NSString string];
+        self->currentAnimationId     = [NSString string];
 
         if ([self isPad]) {
             [self scaleSheet:objects
@@ -260,7 +260,7 @@ typedef struct _ftcCurrentPreset {
 
 - (void)scheduleAnimation {
     [scheduler_ unscheduleAllSelectorsForTarget:self];
-    [scheduler_ scheduleSelector:@selector(handleScheduleUpdate:) 
+    [scheduler_ scheduleSelector:@selector(handleScheduleUpdate:)
                        forTarget:self 
                         interval:[frameRate floatValue] / 1000 
                           paused:NO];
@@ -339,7 +339,7 @@ typedef struct _ftcCurrentPreset {
         // SET ANCHOR P
         CGSize eSize = [_sprite boundingBox].size;
         CGPoint aP = CGPointMake( [info registrationPointX] / eSize.width
-                                , (eSize.height - (-[info registrationPointY])) 
+                                , (eSize.height - ([info registrationPointY])) 
                                                   / eSize.height);
         
         [_sprite setAnchorPoint:aP];
