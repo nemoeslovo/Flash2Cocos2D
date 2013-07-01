@@ -142,20 +142,27 @@ typedef struct _ftcCurrentPreset {
                       andAnimationSet:nil];
 }
 
-- (id)initWithObjectsArray:(NSArray *)_objects
-           andAnimationSet:(FTCAnimationsSet *)_animationsSet {
+- (id)initWithObjectsArray:(NSArray *)objects
+           andAnimationSet:(FTCAnimationsSet *)animationsSet {
     self = [super init];
     if (self) {
         [self setChildrenTable:       [NSMutableDictionary dictionary]];
         [self setAnimationEventsTable:[NSMutableDictionary dictionary]];
         [self setFrameInfoArray      :[NSMutableDictionary dictionary]];
-        self->currentAnimationId    = [NSString string];
+        self->_currentAnimationId    = [NSString string];
 
-        if (_objects) {
-            [self fillWithObjects:_objects];
+        if ([self isPad]) {
+            [self scaleSheet:objects
+            withAnimationSet:animationsSet
+                     byScale:2];
         }
-        if (_animationsSet) {
-            [self fillSpritesWithAnimationSet:_animationsSet];
+
+
+        if (objects) {
+            [self fillWithObjects:objects];
+        }
+        if (animationsSet) {
+            [self fillSpritesWithAnimationSet:animationsSet];
         }
         [self setFirstPose];
         [self scheduleAnimation];
@@ -464,6 +471,29 @@ typedef struct _ftcCurrentPreset {
 
 - (NSInteger)animationPresetsCount {
     return [[self animationPresets] count];
+}
+
+/**
+ * if images bigger then needed use this method for scale down transformation matrix
+ */
+- (void)scaleSheet:(NSArray *)_objects withAnimationSet:(FTCAnimationsSet *)_animationsSet byScale:(CGFloat)scale {
+    for (FTCObjectInfo *objectInfo in _objects) {
+        [objectInfo setRegistrationPointX:scale * [objectInfo registrationPointX]];
+        [objectInfo setRegistrationPointY:scale * [objectInfo registrationPointY]];
+    }
+    
+    for (FTCAnimationInfo *animationInfo in [_animationsSet animations]) {
+        for (FTCPartInfo *partInfo in [animationInfo parts]) {
+            for (FTCFrameInfo *frameInfo in [partInfo framesInfo]) {
+                [frameInfo setTx:scale * [frameInfo tx]];
+                [frameInfo setTy:scale * [frameInfo ty]];
+            }
+        }
+    }
+}
+
+- (BOOL)isPad {
+    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
 }
 
 
