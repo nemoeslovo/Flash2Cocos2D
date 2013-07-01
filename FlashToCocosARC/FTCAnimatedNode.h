@@ -27,6 +27,8 @@
 @property (unsafe_unretained) id<FTCAnimatedNodeDelegate>  delegate;
 
 @property (assign)            NSNumber                    *frameRate;
+@property (strong)            NSString                    *name;
+
 
 /*
 * preset - a sequence of small animations, each of which can

@@ -55,7 +55,6 @@ typedef struct _ftcCurrentPreset {
 @property (strong) NSMutableDictionary *childrenTable;
 //table for events of whole animation
 @property (strong) NSMutableDictionary *animationEventsTable;
-@property (strong) NSString            *name;
 
 //table of name -> animation that this AnimatedNode able response
 @property (nonatomic, strong) NSMutableDictionary   *frameInfoArray;
@@ -96,7 +95,7 @@ typedef struct _ftcCurrentPreset {
 @synthesize frameInfoArray          = _frameInfoArray;
 @synthesize isAnimatedNodeTransform = _isAnimatedNodeTransform;
 @synthesize doesLoop = _doesLoop;
-@dynamic    name;
+@synthesize name = _name;
 
 
 + (FTCAnimatedNode *)animatedNodeFromXMLFile:(NSString *)_xmlfile {
