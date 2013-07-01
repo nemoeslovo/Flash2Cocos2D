@@ -16,15 +16,16 @@
 @class FTCPresetPart;
 
 @interface FTCAnimatedNode : CCMenuItem {
-    NSArray     *currentAnimEvent;
-    NSInteger   intFrame;
-    NSInteger   currentAnimationLength;
-    NSString    *currentAnimationId;
+    NSArray     *_currentAnimEvent;
+    NSInteger   _intFrame;
+    NSInteger   _currentAnimationLength;
+    NSString    *_currentAnimationId;
     BOOL        _isPaused;
     BOOL        _doesLoop;
 }
 
 @property (unsafe_unretained) id<FTCAnimatedNodeDelegate>  delegate;
+@property (strong)            NSString                     *name;
 
 @property (assign)            NSNumber                    *frameRate;
 
