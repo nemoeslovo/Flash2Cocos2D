@@ -7,11 +7,9 @@
 //
 
 
-// Import the interfaces
 #import "HelloWorldLayer.h"
-
-// Needed to obtain the Navigation Controller
 #import "AppDelegate.h"
+#import "FTCAnimatedNode.h"
 
 #pragma mark - HelloWorldLayer
 
@@ -28,7 +26,10 @@
 
 -(id) init {
 	if( (self=[super init]) ) {
-		
+        FTCAnimatedNode *dog = [FTCAnimatedNode animatedNodeFromXMLFile:@"dog"];
+        [dog playAnimation:@"bark" loop:YES wait:NO];
+        [dog setPosition:ccp(200, 200)];
+        [self addChild:dog];
 	}
 	return self;
 }
