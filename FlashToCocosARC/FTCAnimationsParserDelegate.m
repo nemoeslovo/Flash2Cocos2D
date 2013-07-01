@@ -18,7 +18,13 @@
 
 #define ATTR_FRAME_COUNT @"frameCount"
 #define ATTR_FRAME_RATE  @"frameRate"
-#define ATTR_NAME      @"name"
+#define ATTR_NAME        @"name"
+
+#define ATTR_RIGHT_MARGIN @"rightMargined"
+#define ATTR_LEFT_MARGIN  @"leftMargined"
+#define ATTR_TOP_MARGIN   @"topMargined"
+#define ATTR_BOTT_MARGIN  @"bottomMargined"
+
 
 #define ATTR_A         @"a"
 #define ATTR_B         @"b"
@@ -65,6 +71,11 @@
         
         [_currentFrameInfo setAlpha:[[attributeDict objectForKey:ATTR_ALPHA] floatValue]];
         [_currentFrameInfo setIndex:[[attributeDict objectForKey:ATTR_INDEX] integerValue]];
+
+        [_currentFrameInfo setTopMargined:[[attributeDict objectForKey:ATTR_TOP_MARGIN] boolValue]];
+        [_currentFrameInfo setLeftMargined:[[attributeDict objectForKey:ATTR_LEFT_MARGIN] boolValue]];
+        [_currentFrameInfo setRightMargined:[[attributeDict objectForKey:ATTR_RIGHT_MARGIN] boolValue]];
+        [_currentFrameInfo setBottomMargined:[[attributeDict objectForKey:ATTR_BOTT_MARGIN] boolValue]];
         
         return;
     }
