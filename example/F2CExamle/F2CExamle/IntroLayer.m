@@ -53,7 +53,7 @@
 
 		// add the label as a child to this Layer
 		[self addChild: background];
-	}
+        }
 	
 	return self;
 }
