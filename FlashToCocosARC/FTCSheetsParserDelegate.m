@@ -43,7 +43,7 @@
                                                          andPath:[attributeDict objectForKey:ATTR_PATH]
                                                           andRPX:[[attributeDict objectForKey:ATTR_REG_POINT_X] floatValue]
                                                           andRPY:[[attributeDict objectForKey:ATTR_REG_POINT_Y] floatValue]
-                                                       andZIndex:[attributeDict objectForKey:ATTR_Z_INDEX]];
+                                                       andZIndex:[[attributeDict objectForKey:ATTR_Z_INDEX] integerValue]];
         if (!_arrayOfObjects)
             _arrayOfObjects = [[NSMutableArray alloc] init];
         return;
